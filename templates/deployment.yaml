@@ -11,6 +11,11 @@ spec:
   selector:
     matchLabels:
       {{- include "ctfd.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.ctfd.updateStrategy.maxSurge }}
+      maxUnavailable: {{ .Values.ctfd.updateStrategy.maxUnavailable }}
   template:
     metadata:
       {{- with .Values.ctfd.podAnnotations }}

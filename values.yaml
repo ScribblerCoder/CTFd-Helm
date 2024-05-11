@@ -92,6 +92,11 @@ ctfd:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+  updateStrategy:
+    # -- CTFd update strategy rolling update max surge (extra pods during rolling update)
+    maxSurge: 2
+    # -- CTFd update strategy rolling update max unavailable pods count
+    maxUnavailable: 1
   # @ignored
   service:
     type: ClusterIP
