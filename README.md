@@ -17,6 +17,11 @@ Set the values in `values.yaml` to your desired configuration. You can also use 
 helm install ctfd . -f values.yaml --create-namespace --namespace ctfd
 ```
 
+## Uninstallation
+```bash
+helm uninstall ctfd --namespace ctfd
+```
+
 ## Features
 
 - [x] HA and horizontal autoscaling with CPU and memory metrics
@@ -35,12 +40,12 @@ helm install ctfd . -f values.yaml --create-namespace --namespace ctfd
 
 ## To Do
 
-- [ ] Performance testing to verify autoscaling capabilities
+- [ ] Performance testing to verify autoscaling capabilities + e2e testing
 - [ ] Fine tune cpu/mem requests and limits
 - [ ] Chaos testing to verify HA capabilities
-- [ ] Add Pod Disruption budget
+- [x] Add Pod Disruption budget (Added a rolling update strategy instead)
 - [ ] Security testing to verify deployment security
-- [ ] Helm linting and testing with GitHub Actions
+- [x] Helm linting and testing with GitHub Actions (status badge remaining)
 - [ ] Publish Helm chart to Artifact Hub
 - [x] Custom NOTES.txt (post-installation message)
 - [ ] Add custom metrics for autoscaling
@@ -94,6 +99,8 @@ helm install ctfd . -f values.yaml --create-namespace --namespace ctfd
 | ctfd.serviceAccount.create | bool | `true` | creates a CTFd service account |
 | ctfd.serviceAccount.name | string | `""` | CTFd service account name |
 | ctfd.tolerations | list | `[]` | CTFd tolerations |
+| ctfd.updateStrategy.maxSurge | int | `1` | CTFd update strategy rolling update max surge (extra pods during rolling update) |
+| ctfd.updateStrategy.maxUnavailable | int | `1` | CTFd update strategy rolling update max unavailable pods count |
 | ctfd.uploadprovider.filesystem.enabled | bool | `true` | Enable file system upload provider (Persistent Volume) |
 | ctfd.uploadprovider.filesystem.size | string | `"8Gi"` | Uploads folder size |
 | ctfd.uploadprovider.filesystem.storageClassName | string | `""` | Storage class name |
