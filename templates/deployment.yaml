@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ctfd.fullname" . }}
+  labels:
+    {{- include "ctfd.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.ctfd.autoscaling.enabled }}
+  replicas: {{ .Values.ctfd.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "ctfd.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.ctfd.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ctfd.labels" . | nindent 8 }}
+        {{- with .Values.ctfd.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.ctfd.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ctfd.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.ctfd.securityContext | nindent 12 }}
+          image: "{{ .Values.ctfd.image.repository }}:{{ .Values.ctfd.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.ctfd.image.pullPolicy }}
+          env:
+          {{- toYaml .Values.ctfd.env | nindent 12 }}
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ctfd.fullname" . }}
+                  key: SECRET_KEY
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ctfd.fullname" . }}
+                  key: DATABASE_URL
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ctfd.fullname" . }}
+                  key: REDIS_URL
+            {{- if .Values.ctfd.uploadprovider.s3.enabled }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ctfd.fullname" . }}
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ctfd.fullname" . }}
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ctfd.fullname" . }}
+                  key: AWS_S3_BUCKET
+            - name: AWS_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ctfd.fullname" . }}
+                  key: AWS_S3_ENDPOINT_URL
+            {{ end }}
+            - name: LOG_FOLDER
+              value: {{ .Values.ctfd.logs.path }}
+            {{- if .Values.ctfd.uploadprovider.filesystem.enabled }}
+            - name: UPLOAD_FOLDER
+              value: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder -}}
+            {{ end }}
+            - name: UPLOAD_PROVIDER
+              value: {{ .Values.ctfd.uploadprovider.filesystem.enabled | ternary "filesystem" "s3" }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.ctfd.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.ctfd.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.ctfd.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.ctfd.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      initContainers:
+        - name: ctfd-init-logs-permissions
+          image: busybox:1.28
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "chown -R 1001:1001 {{ .Values.ctfd.logs.path }}"]
+          volumeMounts:
+            - name: logs
+              mountPath: {{ .Values.ctfd.logs.path -}}
+        {{ if and .Values.ctfd.uploadprovider.filesystem.enabled }}
+        - name: ctfd-init-uploads-permissions
+          image: busybox:1.28
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "chown -R 1001:1001 {{ .Values.ctfd.uploadprovider.filesystem.upload_folder }}"]
+          volumeMounts:
+            - name: uploads
+              mountPath: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder -}}
+        {{ end }} 
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: {{ include "ctfd.fullname" . }}-logs
+        {{ if and .Values.ctfd.uploadprovider.filesystem.enabled }}
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: {{ include "ctfd.fullname" . }}-uploads
+        {{ end }}
+      {{- with .Values.ctfd.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ctfd.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ctfd.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

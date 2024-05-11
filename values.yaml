@@ -1,0 +1,236 @@
+ctfd:
+  image:
+    # -- repository link to the CTFd docker image
+    repository: ghcr.io/ctfd/ctfd
+    # -- image pull policy. One of Always, Never, IfNotPresent
+    pullPolicy: IfNotPresent
+    # -- Overrides the image tag (version)
+    # @default -- `appVersion`
+    tag: ""
+  # -- Image pull secrets (use this for private repos)
+  imagePullSecrets: []
+
+  # -- CTFd replica count (If autoscaling is enabled, this value is ignored)
+  replicaCount: 2
+  # custom scaling metrics should be considered like the Req/sec and # of sessions, etc.
+  autoscaling:
+    # -- Enables HPA autoscaling
+    enabled: true
+    # -- Autoscaling min replicas
+    minReplicas: 2
+    # -- Autoscaling max replicas
+    maxReplicas: 10
+    # -- Autoscaling target CPU utilization percentage
+    targetCPUUtilizationPercentage: 80
+    # -- Autoscaling target memory utilization percentage
+    # targetMemoryUtilizationPercentage: 80
+  resources:
+    # -- CTFd pod CPU limit
+    limits:
+      # -- CTFd pod CPU limit
+      cpu: "2"
+      # -- CTFd pod memory limit
+      memory: 2Gi
+    requests:
+      # -- CTFd pod CPU request
+      cpu: "1"
+      # -- CTFd pod memory request
+      memory: 512Mi
+
+  # Default env variables (non exhaustive). Refer to CTFd documentation for more
+  # No need to set SECRET_KEY, its generated automatically
+  # @ignored
+  env:
+    - name: WORKERS
+      value: "2" # let HPA handle autoscaling
+    - name: ACCESS_LOG
+      value: "-"
+    - name: ERROR_LOG
+      value: "-"
+    - name: REVERSE_PROXY
+      value: "true"
+      
+  uploadprovider:
+    filesystem:
+      # -- Enable file system upload provider (Persistent Volume)
+      enabled: true
+      # -- Uploads folder path. This is where the CTFd attachments are stored
+      upload_folder: /var/uploads
+      # -- Storage class name
+      storageClassName: ""
+      # -- Uploads folder size
+      size: 8Gi
+    s3:
+      # -- Enables AWS S3 upload provider. If enabled, filesystem upload provider must be disabled
+      enabled: false
+      # -- AWS S3 bucket name
+      bucket: ""
+      # -- AWS S3 bucket region
+      endpoint_url: ""
+      # -- AWS S3 bucket access key
+      secret_access_key: ""
+      # -- AWS S3 bucket secret key id
+      access_key_id: ""
+
+  ingress:
+    # -- Enables ingress
+    enabled: false
+    # -- Ingress class
+    className: ""
+    # -- Ingress annotations
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    # @ignored
+    hosts:
+      - host: ctfd.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    # @ignored
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  # @ignored
+  service:
+    type: ClusterIP
+    port: 8000
+
+  logs:
+    # -- Logs path
+    path: /var/log/CTFd
+    # -- Logs PVC size
+    size: 1Gi
+    # -- Storage class name
+    storageClassName: ""
+  # CTFd security context
+  # @default -- Check `values.yaml`
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+
+  # -- CTFd readiness probe
+  # @default -- Check `values.yaml`
+  livenessProbe:
+    httpGet:
+      path: /healthcheck
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 3
+
+  # -- CTFd readiness probe
+  # @default -- Check `values.yaml`
+  readinessProbe:
+    httpGet:
+      path: /healthcheck
+      port: http
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 3
+
+  # -- Chart name override
+  nameOverride: ""
+  # -- Chart fullname override
+  fullnameOverride: ""
+  
+  # -- CTFd node selector
+  nodeSelector: {}
+
+  # -- CTFd tolerations
+  tolerations: []
+
+  # -- CTFd affinity
+  affinity: {}
+
+  # -- CTFd pod annotations
+  podAnnotations: {}
+
+  # -- CTFd pod labels
+  podLabels: {}
+
+  # -- CTFd pod security context
+  podSecurityContext: {}
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    # -- creates a CTFd service account
+    create: true
+    # Automatically mount a ServiceAccount's API credentials?
+    # -- CTFd service account mount API credentials
+    automount: true
+    # Annotations to add to the service account
+    # -- CTFd service account annotations
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    # -- CTFd service account name
+    name: ""
+
+# Override the mariadb subchart values
+mariadb:
+  # -- Deploys bitnami's mariadb (set to false if you want to use an external database)
+  enabled: true
+  auth:
+    rootPassword: ctfd
+    username: ctfd
+    password: ctfd
+    database: ctfd
+  # -- External database connection details. Takes effect if `mariadb.enabled` is set to false
+  # @default -- ignored
+  external:
+    port: 3306
+    host: external-mariadb-host
+    username: ""
+    password: ""
+    database: ""
+  volumePermissions: 
+    enabled: true # set to false if you want to manage the permissions yourself
+  primary:
+    # -- MariaDB primary entrypoint extra flags
+    # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml` 
+    extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
+    resourcePreset: small
+  secondary:
+    # -- MariaDB primary entrypoint extra flags
+    # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml` 
+    extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
+    resourcePreset: small # more taiored resources are needed
+    replicaCount: 2
+  metrics: 
+    enabled: true # prometheus metrics exporter
+
+# Override the redis subchart values (I am considering the switch from redis to redis-ha)
+redis:
+  # -- Deploys bitnami's redis (set to false if you want to use an external cache)
+  enabled: true # set to false if you want to use an external redis
+  # -- External redis cache connection details. Takes effect if `redis.enabled` is set to false
+  # @default -- ignored
+  external:
+    port: 6379
+    host: external-redis-host
+    username: ""
+    password: ""
+  volumePermissions: 
+    enabled: true # set to false if you want to manage the permissions yourself
+  sysctl:
+    enabled: true
+  auth:
+    enabled: false
+  master:
+    count: 1 # higher values are experimental
+    resourcesPreset: micro # more tailored resources are needed
+  replica: 
+    autoscaling:
+      enabled: true
+      targetCPU: 80
+    resourcesPreset: micro
+  metrics: 
+    enabled: true # prometheus metrics exporter
+
+

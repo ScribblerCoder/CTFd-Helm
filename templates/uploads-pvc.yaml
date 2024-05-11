@@ -1,0 +1,15 @@
+{{if .Values.ctfd.uploadprovider.filesystem.enabled}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "ctfd.fullname" . }}-uploads
+  labels:
+    {{- include "ctfd.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.ctfd.uploadprovider.filesystem.storageClassName }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.ctfd.uploadprovider.filesystem.size }}
+{{ end }}
