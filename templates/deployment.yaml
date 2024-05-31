@@ -42,44 +42,6 @@ spec:
           image: "{{ .Values.ctfd.image.repository }}:{{ .Values.ctfd.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.ctfd.image.pullPolicy }}
           env:
-          {{- toYaml .Values.ctfd.env | nindent 12 }}
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "ctfd.fullname" . }}
-                  key: SECRET_KEY
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "ctfd.fullname" . }}
-                  key: DATABASE_URL
-            - name: REDIS_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "ctfd.fullname" . }}
-                  key: REDIS_URL
-            {{- if .Values.ctfd.uploadprovider.s3.enabled }}
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "ctfd.fullname" . }}
-                  key: AWS_ACCESS_KEY_ID
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "ctfd.fullname" . }}
-                  key: AWS_SECRET_ACCESS_KEY
-            - name: AWS_S3_BUCKET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "ctfd.fullname" . }}
-                  key: AWS_S3_BUCKET
-            - name: AWS_S3_ENDPOINT_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "ctfd.fullname" . }}
-                  key: AWS_S3_ENDPOINT_URL
-            {{ end }}
             - name: LOG_FOLDER
               value: {{ .Values.ctfd.logs.path }}
             {{- if .Values.ctfd.uploadprovider.filesystem.enabled }}
@@ -102,6 +64,9 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          envFrom:
+          - secretRef:
+              name: {{ include "ctfd.fullname" . }}
       initContainers:
         - name: ctfd-init-logs-permissions
           image: busybox:1.28
