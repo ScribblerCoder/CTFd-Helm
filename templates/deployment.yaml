@@ -41,17 +41,10 @@ spec:
             {{- toYaml .Values.ctfd.securityContext | nindent 12 }}
           image: "{{ .Values.ctfd.image.repository }}:{{ .Values.ctfd.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.ctfd.image.pullPolicy }}
-          env:
-            - name: LOG_FOLDER
-              value: {{ .Values.ctfd.logs.path }}
-            {{- if .Values.ctfd.uploadprovider.filesystem.enabled }}
-            - name: UPLOAD_FOLDER
-              value: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder -}}
-            {{ end }}
-            - name: UPLOAD_PROVIDER
-              value: {{ .Values.ctfd.uploadprovider.filesystem.enabled | ternary "filesystem" "s3" }}
           envFrom:
           - secretRef:
+              name: {{ include "ctfd.fullname" . }}
+          - configMapRef:
               name: {{ include "ctfd.fullname" . }}
           ports:
             - name: http
