@@ -23,7 +23,7 @@ ctfd:
     # -- Autoscaling target CPU utilization percentage
     targetCPUUtilizationPercentage: 80
     # -- Autoscaling target memory utilization percentage
-    # targetMemoryUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
   resources:
     # -- CTFd pod CPU limit
     limits:
@@ -96,7 +96,7 @@ ctfd:
     # -- CTFd update strategy rolling update max surge (extra pods during rolling update)
     maxSurge: 2
     # -- CTFd update strategy rolling update max unavailable pods count
-    maxUnavailable: 1
+    maxUnavailable: 25%
   # @ignored
   service:
     type: ClusterIP
