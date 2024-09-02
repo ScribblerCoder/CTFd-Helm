@@ -23,7 +23,7 @@ ctfd:
     # -- Autoscaling target CPU utilization percentage
     targetCPUUtilizationPercentage: 80
     # -- Autoscaling target memory utilization percentage
-    # targetMemoryUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
   resources:
     # -- CTFd pod CPU limit
     limits:
