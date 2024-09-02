@@ -97,6 +97,17 @@ ctfd:
     maxSurge: 2
     # -- CTFd update strategy rolling update max unavailable pods count
     maxUnavailable: 25%
+  
+  pdb:
+    # -- Deploy a [PodDisruptionBudget] for the application controller
+    enabled: false
+    # -- Number of pods that are available after eviction as number or percentage (eg.: 50%)
+    # @default -- `""` (defaults to 0 if not specified)
+    minAvailable: ""
+    # -- Number of pods that are unavailable after eviction as number or percentage (eg.: 50%).
+    ## Has higher precedence over `controller.pdb.minAvailable`
+    maxUnavailable: "50%"
+    
   # @ignored
   service:
     type: ClusterIP

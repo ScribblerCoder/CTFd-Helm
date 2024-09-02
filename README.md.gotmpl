@@ -5,7 +5,7 @@ This is a Helm chart for deploying CTFd on Kubernetes. It is deploys the officia
 
 ## Installation
 
-Build helm dependencies
+Build helm dependencies (Redis and MariaDB) before installing the chart.
 
 ```bash
 helm dependency update
@@ -64,7 +64,7 @@ helm uninstall ctfd --namespace ctfd
 
 - CTFd `SECRET_KEY` is automatically generated during installation. You can find it in the secret `ReleaseName-ctfd`. This secret is shared with all CTFd pods to allow 
 - MariaDB in this chart has one primary and one secondary replica. The primary replica is used for read/write operations, while the secondary replica is used for read-only operations. The secondary replica is not used by CTFd.
-- Redis in this chart uses single master with multiple slaves.
+- Redis in this chart uses single master with multiple workers.
 
 
 {{ template "helm-docs.versionFooter" . }}
