@@ -1,0 +1,17 @@
+{{- if .Values.ctfd.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "ctfd.fullname" . }}
+  labels:
+    {{- include "ctfd.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.ctfd.pdb.maxUnavailable }}
+  maxUnavailable: {{ . }}
+  {{- else }}
+  minAvailable: {{ .Values.ctfd.pdb.minAvailable | default 0 }}
+  {{- end }}
+  selector:
+    matchLabels:
+    {{- include "ctfd.selectorLabels" . | nindent 4}}
+{{- end }}
