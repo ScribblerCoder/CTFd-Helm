@@ -96,7 +96,7 @@ ctfd:
     # -- CTFd update strategy rolling update max surge (extra pods during rolling update)
     maxSurge: 2
     # -- CTFd update strategy rolling update max unavailable pods count
-    maxUnavailable: 1
+    maxUnavailable: 25%
   # @ignored
   service:
     type: ClusterIP
