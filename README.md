@@ -5,7 +5,7 @@ This is a Helm chart for deploying CTFd on Kubernetes. It is deploys the officia
 
 ## Installation
 
-Build helm dependencies
+Build helm dependencies (Redis and MariaDB) before installing the chart.
 
 ```bash
 helm dependency update
