@@ -78,9 +78,6 @@ helm uninstall ctfd --namespace ctfd
 | ctfd.ingress.className | string | `""` | Ingress class |
 | ctfd.ingress.enabled | bool | `false` | Enables ingress |
 | ctfd.livenessProbe | object | Check `values.yaml` | CTFd readiness probe |
-| ctfd.logs.path | string | `"/var/log/CTFd"` | Logs path |
-| ctfd.logs.size | string | `"1Gi"` | Logs PVC size |
-| ctfd.logs.storageClassName | string | `""` | Storage class name |
 | ctfd.nameOverride | string | `""` | Chart name override |
 | ctfd.nodeSelector | object | `{}` | CTFd node selector |
 | ctfd.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the application controller |

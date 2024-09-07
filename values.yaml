@@ -49,6 +49,8 @@ ctfd:
       value: "-"
     - name: REVERSE_PROXY
       value: "true"
+    - name: LOG_FOLDER
+      value: "/var/log/ctfd"
       
   uploadprovider:
     filesystem:
@@ -113,13 +115,6 @@ ctfd:
     type: ClusterIP
     port: 8000
 
-  logs:
-    # -- Logs path
-    path: /var/log/CTFd
-    # -- Logs PVC size
-    size: 1Gi
-    # -- Storage class name
-    storageClassName: ""
   # CTFd security context
   # @default -- Check `values.yaml`
   securityContext:

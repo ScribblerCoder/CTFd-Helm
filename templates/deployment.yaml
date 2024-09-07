@@ -62,15 +62,8 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      initContainers:
-        - name: ctfd-init-logs-permissions
-          image: busybox:1.28
-          imagePullPolicy: IfNotPresent
-          command: ["sh", "-c", "chown -R 1001:1001 {{ .Values.ctfd.logs.path }}"]
-          volumeMounts:
-            - name: logs
-              mountPath: {{ .Values.ctfd.logs.path -}}
         {{ if and .Values.ctfd.uploadprovider.filesystem.enabled }}
+          volumeMounts:
         - name: ctfd-init-uploads-permissions
           image: busybox:1.28
           imagePullPolicy: IfNotPresent
@@ -79,15 +72,12 @@ spec:
             - name: uploads
               mountPath: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder -}}
         {{ end }} 
+      {{ if and .Values.ctfd.uploadprovider.filesystem.enabled }}
       volumes:
-        - name: logs
-          persistentVolumeClaim:
-            claimName: {{ include "ctfd.fullname" . }}-logs
-        {{ if and .Values.ctfd.uploadprovider.filesystem.enabled }}
         - name: uploads
           persistentVolumeClaim:
             claimName: {{ include "ctfd.fullname" . }}-uploads
-        {{ end }}
+      {{ end }}
       {{- with .Values.ctfd.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
