@@ -5,14 +5,16 @@ on:
     branches:
       - main
       paths:
-        - 'charts/**'
+        - 'templates/**'
         - 'values.yaml'
+        - 'Chart.yaml'
   pull_request:
     branches:
       - main
     paths:
-      - 'charts/**'
+      - 'templates/**'
       - 'values.yaml'
+      - 'Chart.yaml'
 
 jobs:
   lint-test:
