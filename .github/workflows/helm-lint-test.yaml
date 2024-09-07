@@ -40,7 +40,9 @@ jobs:
             echo "No changes in Helm chart."
             echo "helm_changed=false" >> $GITHUB_ENV
           fi
-
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        
       - name: Run chart-testing (lint)
         if: env.helm_changed == 'true'
         run: ct lint --target-branch ${{ github.event.repository.default_branch }}
