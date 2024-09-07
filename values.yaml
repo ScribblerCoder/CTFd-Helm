@@ -99,7 +99,7 @@ ctfd:
     maxSurge: 2
     # -- CTFd update strategy rolling update max unavailable pods count
     maxUnavailable: 25%
-  
+
   pdb:
     # -- Deploy a [PodDisruptionBudget] for the application controller
     enabled: false
@@ -213,7 +213,7 @@ mariadb:
     extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
     resourcePreset: small  # more taiored resources are needed
     replicaCount: 2
-  metrics: 
+  metrics:
     enabled: true  # prometheus metrics exporter
 
 # Override the redis subchart values (I am considering the switch from redis to redis-ha)
@@ -227,7 +227,7 @@ redis:
     host: external-redis-host
     username: ""
     password: ""
-  volumePermissions: 
+  volumePermissions:
     enabled: true  # set to false if you want to manage the permissions yourself
   sysctl:
     enabled: true
@@ -235,7 +235,7 @@ redis:
     enabled: false
   master:
     count: 1  # higher values are experimental
-    resourcesPreset: micro # more tailored resources are needed
+    resourcesPreset: micro  # more tailored resources are needed
   replica: 
     autoscaling:
       enabled: true
