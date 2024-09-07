@@ -42,7 +42,7 @@ ctfd:
   # @ignored
   env:
     - name: WORKERS
-      value: "2" # let HPA handle autoscaling
+      value: "2"  # let HPA handle autoscaling
     - name: ACCESS_LOG
       value: "-"
     - name: ERROR_LOG
@@ -51,7 +51,7 @@ ctfd:
       value: "true"
     - name: LOG_FOLDER
       value: "/var/log/ctfd"
-      
+
   uploadprovider:
     filesystem:
       # -- Enable file system upload provider (Persistent Volume)
@@ -109,7 +109,7 @@ ctfd:
     # -- Number of pods that are unavailable after eviction as number or percentage (eg.: 50%).
     ## Has higher precedence over `controller.pdb.minAvailable`
     maxUnavailable: "50%"
-    
+
   # @ignored
   service:
     type: ClusterIP
@@ -149,7 +149,7 @@ ctfd:
   nameOverride: ""
   # -- Chart fullname override
   fullnameOverride: ""
-  
+
   # -- CTFd node selector
   nodeSelector: {}
 
@@ -200,26 +200,26 @@ mariadb:
     username: ""
     password: ""
     database: ""
-  volumePermissions: 
-    enabled: true # set to false if you want to manage the permissions yourself
+  volumePermissions:
+    enabled: true  # set to false if you want to manage the permissions yourself
   primary:
     # -- MariaDB primary entrypoint extra flags
-    # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml` 
+    # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
     extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
     resourcePreset: small
   secondary:
     # -- MariaDB primary entrypoint extra flags
-    # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml` 
+    # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
     extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
-    resourcePreset: small # more taiored resources are needed
+    resourcePreset: small  # more taiored resources are needed
     replicaCount: 2
   metrics: 
-    enabled: true # prometheus metrics exporter
+    enabled: true  # prometheus metrics exporter
 
 # Override the redis subchart values (I am considering the switch from redis to redis-ha)
 redis:
   # -- Deploys bitnami's redis (set to false if you want to use an external cache)
-  enabled: true # set to false if you want to use an external redis
+  enabled: true  # set to false if you want to use an external redis
   # -- External redis cache connection details. Takes effect if `redis.enabled` is set to false
   # @default -- ignored
   external:
@@ -228,13 +228,13 @@ redis:
     username: ""
     password: ""
   volumePermissions: 
-    enabled: true # set to false if you want to manage the permissions yourself
+    enabled: true  # set to false if you want to manage the permissions yourself
   sysctl:
     enabled: true
   auth:
     enabled: false
   master:
-    count: 1 # higher values are experimental
+    count: 1  # higher values are experimental
     resourcesPreset: micro # more tailored resources are needed
   replica: 
     autoscaling:
@@ -242,4 +242,4 @@ redis:
       targetCPU: 80
     resourcesPreset: micro
   metrics: 
-    enabled: true # prometheus metrics exporter
+    enabled: true  # prometheus metrics exporter
