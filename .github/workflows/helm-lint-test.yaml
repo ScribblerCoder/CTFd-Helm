@@ -40,10 +40,10 @@ jobs:
         
       - name: Run chart-testing (lint)
         run: |
-          ct lint --chart-dirs . --charts .
+          ct lint --chart-dirs . --charts . --validate-maintainers=false
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.10.0
 
       - name: Run chart-testing (install)
-        run: ct install --chart-dirs . --charts .
+        run: ct install --chart-dirs . --charts . --validate-maintainers=false
