@@ -236,10 +236,10 @@ redis:
   master:
     count: 1  # higher values are experimental
     resourcesPreset: micro  # more tailored resources are needed
-  replica: 
+  replica:
     autoscaling:
       enabled: true
       targetCPU: 80
     resourcesPreset: micro
-  metrics: 
+  metrics:
     enabled: true  # prometheus metrics exporter
