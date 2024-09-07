@@ -40,8 +40,8 @@ jobs:
         
       - name: Run chart-testing (lint)
         run: 
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo update
+          helm repo add bitnami https://charts.bitnami.com/bitnami && \
+          helm repo update && \
           ct lint --chart-dirs . --charts .
 
       - name: Create kind cluster
