@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - main
-      paths:
-        - 'templates/**'
-        - 'values.yaml'
-        - 'Chart.yaml'
+    paths:
+      - 'templates/**'
+      - 'values.yaml'
+      - 'Chart.yaml'
   pull_request:
     branches:
       - main
