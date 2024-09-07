@@ -46,4 +46,4 @@ jobs:
         uses: helm/kind-action@v1.10.0
 
       - name: Run chart-testing (install)
-        run: ct install --chart-dirs . --charts . --validate-maintainers=false
+        run: ct install --chart-dirs . --charts .
