@@ -243,5 +243,3 @@ redis:
     resourcesPreset: micro
   metrics: 
     enabled: true # prometheus metrics exporter
-
-
