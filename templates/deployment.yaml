@@ -77,7 +77,7 @@ spec:
               mountPath: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder -}}
         {{- end }} 
       volumes:
-      {{ if and .Values.ctfd.uploadprovider.filesystem.enabled }}
+      {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
         - name: uploads
           persistentVolumeClaim:
             claimName: {{ include "ctfd.fullname" . }}-uploads
