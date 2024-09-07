@@ -33,7 +33,7 @@ jobs:
       - name: Check for changes in values or chart templates
         run: |
           # Check for changes in values.yaml or any file in the templates directory
-          if git diff --exit-code --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E 'values.yaml|templates/'; then
+          if git diff --exit-code --name-only | grep -E 'values.yaml|templates/'; then
             echo "Changes detected in Helm chart."
             echo "helm_changed=true" >> $GITHUB_ENV
           else
