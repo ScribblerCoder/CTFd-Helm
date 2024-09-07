@@ -66,7 +66,7 @@ spec:
               mountPath: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder }}
             {{- end }}
           {{- end }}
-        {{ if and .Values.ctfd.uploadprovider.filesystem.enabled }}
+      {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
       initContainers:
         - name: ctfd-init-uploads-permissions
           image: busybox:1.28
@@ -75,7 +75,7 @@ spec:
           volumeMounts:
             - name: uploads
               mountPath: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder -}}
-        {{- end }} 
+      {{- end }} 
       volumes:
       {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
         - name: uploads
