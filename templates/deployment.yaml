@@ -64,6 +64,7 @@ spec:
           {{- end }}
         {{ if and .Values.ctfd.uploadprovider.filesystem.enabled }}
           volumeMounts:
+      initContainers:
         - name: ctfd-init-uploads-permissions
           image: busybox:1.28
           imagePullPolicy: IfNotPresent
