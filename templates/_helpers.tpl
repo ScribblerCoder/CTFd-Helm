@@ -70,7 +70,7 @@ Create the name of the service account to use
 {{- if $SECRET_KEY -}}
 WE FOUND IT
 {{- else -}}
-{{ $SECRET_KEY | toYaml }}
+{{ $SECRET_KEY.data.SECRET_KEY }}
 {{- end -}}
 {{- end -}}
 
