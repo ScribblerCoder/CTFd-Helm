@@ -70,7 +70,7 @@ Create the name of the service account to use
 {{- if $SECRET_KEY -}}
 WE FOUND IT
 {{- else -}}
-WE DIDNT FIND IT
+{{- printf "Secret name: %s\n" (include "ctfd.fullname" .) -}}
 {{- end -}}
 {{- end -}}
 
