@@ -258,7 +258,7 @@ redis:
 # Override the seaweedfs subchart values
 seaweedfs:
   # -- Deploys seaweedfs (set to false if you want to use an bucket)
-  enabled: true # set to false if you want to use an external bucket
+  enabled: true  # set to false if you want to use an external bucket
   master:
     # -- seaweedfs-master replicas
     replicas: 3
@@ -271,7 +271,6 @@ seaweedfs:
   volume:
     # -- seaweedfs-volume replicas
     replicas: 3
-    
   filer:
     # -- seaweedfs-filer replicas
     replicas: 3
