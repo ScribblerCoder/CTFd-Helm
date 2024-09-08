@@ -53,17 +53,8 @@ ctfd:
       value: "/var/log/CTFd"
 
   uploadprovider:
-    filesystem:
-      # -- Enable file system upload provider (Persistent Volume)
-      enabled: true
-      # -- Uploads folder path. This is where the CTFd attachments are stored
-      upload_folder: /var/uploads
-      # -- Storage class name
-      storageClassName: ""
-      # -- Uploads folder size
-      size: 8Gi
     s3:
-      # -- Enables AWS S3 upload provider. If enabled, filesystem upload provider must be disabled
+      # -- Enables AWS S3 upload provider. Please enable only one upload provider
       enabled: false
       # -- AWS S3 bucket name
       bucket: ""
@@ -73,6 +64,17 @@ ctfd:
       secret_access_key: ""
       # -- AWS S3 bucket secret key id
       access_key_id: ""
+    minio:
+      # -- Installs minio (compatible with ctfd s3 plugin). Please enable only one upload provider
+      enabled: false
+      # -- Minio bucket name
+      bucket: ""
+      # -- Minio bucket region
+      region: ""
+      # -- Minio bucket access key
+      access_key: ""
+      # -- Minio bucket secret key
+      secret_key: ""
 
   ingress:
     # -- Enables ingress
@@ -144,6 +146,8 @@ ctfd:
     timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 3
+
+  initContainers: []
 
   # -- Chart name override
   nameOverride: ""

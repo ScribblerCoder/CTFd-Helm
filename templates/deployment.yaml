@@ -58,30 +58,18 @@ spec:
             {{- toYaml .Values.ctfd.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.ctfd.resources | nindent 12 }}
-          volumeMounts:
-          {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
-            - name: uploads
-              mountPath: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder }}
-          {{- end }}
           {{- with .Values.volumeMounts }}
+          volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+      {{- with .Values.ctfd.initContainers }}
       initContainers:
-      {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
-        - name: ctfd-init-uploads-permissions
-          image: busybox:1.28
-          imagePullPolicy: IfNotPresent
-          command: ["sh", "-c", "chown -R 1001:1001 {{ .Values.ctfd.uploadprovider.filesystem.upload_folder }}"]
-          volumeMounts:
-            - name: uploads
-              mountPath: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder -}}
-      {{- end }} 
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.volumes }}
       volumes:
-      {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
-        - name: uploads
-          persistentVolumeClaim:
-            claimName: {{ include "ctfd.fullname" . }}-uploads
-      {{ end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.ctfd.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
