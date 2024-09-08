@@ -52,12 +52,12 @@ ctfd:
     - name: LOG_FOLDER
       value: "/var/log/CTFd"
     - name: UPLOAD_PROVIDER
-      value: "s3"
+      value: "s3"  # The chart only supports S3
 
   uploadprovider:
     s3:
       # -- AWS S3 bucket name
-      bucket: ""  # external bucket (seaweedfs must be disabled)
+      bucket: ""  # external bucket (you should disable SeaweedFS. See below)
       # -- AWS S3 bucket region
       endpoint_url: ""
       # -- AWS S3 bucket access key

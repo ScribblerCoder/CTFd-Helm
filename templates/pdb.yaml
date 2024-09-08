@@ -13,5 +13,5 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-    {{- include "ctfd.selectorLabels" . | nindent 4}}
+    {{- include "ctfd.selectorLabels" . | nindent 6}}
 {{- end }}
