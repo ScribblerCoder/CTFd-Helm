@@ -19,10 +19,10 @@ appVersion: "3.7.0"
 # Redis and MySQL/MariaDB
 dependencies:
   - name: redis
-    version: 19.2.0
+    version: 20.0.5
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
   - name: mariadb
-    version: 18.0.2
+    version: 19.0.5
     repository: https://charts.bitnami.com/bitnami
     condition: mariadb.enabled

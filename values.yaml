@@ -35,7 +35,7 @@ ctfd:
       # -- CTFd pod CPU request
       cpu: "1"
       # -- CTFd pod memory request
-      memory: 512Mi
+      memory: 1Gi
 
   # Default env variables (non exhaustive). Refer to CTFd documentation for more
   # No need to set SECRET_KEY, its generated automatically
@@ -104,7 +104,8 @@ ctfd:
 
   pdb:
     # -- Deploy a [PodDisruptionBudget] for the application controller
-    enabled: false
+    # @default -- `enabled: true`
+    enabled: true
     # -- Number of pods that are available after eviction as number or percentage (eg.: 50%)
     # @default -- `""` (defaults to 0 if not specified)
     minAvailable: ""
@@ -133,7 +134,7 @@ ctfd:
     periodSeconds: 10
     timeoutSeconds: 5
     successThreshold: 1
-    failureThreshold: 3
+    failureThreshold: 5
 
   # -- CTFd readiness probe
   # @default -- Check `values.yaml`
@@ -145,7 +146,7 @@ ctfd:
     periodSeconds: 10
     timeoutSeconds: 5
     successThreshold: 1
-    failureThreshold: 3
+    failureThreshold: 5
 
   initContainers: []
 
@@ -191,6 +192,9 @@ ctfd:
 mariadb:
   # -- Deploys bitnami's mariadb (set to false if you want to use an external database)
   enabled: true
+  # -- MariaDB Architecture (`standalone`, `replication`)
+  # @default -- `standalone`
+  architecture: standalone
   auth:
     rootPassword: ctfd
     username: ctfd
@@ -216,7 +220,7 @@ mariadb:
     # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
     extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
     resourcePreset: small  # more taiored resources are needed
-    replicaCount: 2
+    replicaCount: 1
   metrics:
     enabled: true  # prometheus metrics exporter
 
@@ -243,7 +247,7 @@ redis:
   replica:
     autoscaling:
       enabled: true
-      targetCPU: 80
+      targetCPU: "80"
     resourcesPreset: micro
   metrics:
     enabled: true  # prometheus metrics exporter

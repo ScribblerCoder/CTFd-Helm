@@ -61,27 +61,12 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
-
-{{/*
-   Generate CTFd SECRET_KEY
-*/}}
-{{- define "ctfd.SECRET_KEY" -}}
-{{- $SECRET_KEY := lookup "v1" "Secret" .Release.Namespace (include "ctfd.fullname" .) -}}
-{{- if $SECRET_KEY -}}
-{{ $SECRET_KEY.data.SECRET_KEY | b64dec }}
-{{- else -}}
-{{ randAlphaNum 64 }}
-{{- end -}}
-{{- end -}}
-
-
-
 {{/*
    Generate CTFd DATABASE_URL (internal bitnami mariadb or external self managed mariadb)
 */}}
 {{- define "ctfd.DATABASE_URL" -}}
 {{- if .Values.mariadb.enabled -}}
-mysql+pymysql://{{ .Values.mariadb.auth.username | default "ctfd" }}:{{ .Values.mariadb.auth.password | default "ctfd" }}@{{ .Release.Name }}-mariadb/{{ .Values.mariadb.auth.database | default "ctfd" }}
+mysql+pymysql://{{ .Values.mariadb.auth.username | default "ctfd" }}:{{ .Values.mariadb.auth.password | default "ctfd" }}@{{ .Release.Name }}-mariadb{{ if eq .Values.mariadb.architecture "replication" }}-primary{{ end }}/{{ .Values.mariadb.auth.database | default "ctfd" }}
 {{- else -}}
 mysql+pymysql://{{ .Values.mariadb.external.username }}:{{ .Values.mariadb.external.password }}@{{ .Values.mariadb.external.host }}/{{ .Values.mariadb.external.database }}
 {{- end -}}

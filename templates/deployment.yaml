@@ -46,6 +46,8 @@ spec:
           envFrom:
           - secretRef:
               name: {{ include "ctfd.fullname" . }}
+          - secretRef:
+              name: {{ include "ctfd.fullname" . }}-secret-key
           - configMapRef:
               name: {{ include "ctfd.fullname" . }}
           ports:
