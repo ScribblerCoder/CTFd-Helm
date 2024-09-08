@@ -1,5 +1,5 @@
 # CTFd Helm Chart
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.7.0](https://img.shields.io/badge/AppVersion-3.7.0-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.7.3](https://img.shields.io/badge/AppVersion-3.7.3-informational?style=flat-square)
 
 This is a Helm chart for deploying CTFd on Kubernetes. It is deploys the official [CTFd Docker image](ghcr.io/ctfd/ctfd). Supports HA and Autoscaling.
 
@@ -58,6 +58,7 @@ helm uninstall ctfd --namespace ctfd
 |------------|------|---------|
 | https://charts.bitnami.com/bitnami | mariadb | 19.0.5 |
 | https://charts.bitnami.com/bitnami | redis | 20.0.5 |
+| https://seaweedfs.github.io/seaweedfs/helm | seaweedfs | 4.0.0 |
 
 ## Values
 
@@ -103,14 +104,8 @@ helm uninstall ctfd --namespace ctfd
 | ctfd.tolerations | list | `[]` | CTFd tolerations |
 | ctfd.updateStrategy.maxSurge | int | `2` | CTFd update strategy rolling update max surge (extra pods during rolling update) |
 | ctfd.updateStrategy.maxUnavailable | string | `"25%"` | CTFd update strategy rolling update max unavailable pods count |
-| ctfd.uploadprovider.minio.access_key | string | `""` | Minio bucket access key |
-| ctfd.uploadprovider.minio.bucket | string | `""` | Minio bucket name |
-| ctfd.uploadprovider.minio.enabled | bool | `false` | Installs minio (compatible with ctfd s3 plugin). Please enable only one upload provider |
-| ctfd.uploadprovider.minio.region | string | `""` | Minio bucket region |
-| ctfd.uploadprovider.minio.secret_key | string | `""` | Minio bucket secret key |
 | ctfd.uploadprovider.s3.access_key_id | string | `""` | AWS S3 bucket secret key id |
 | ctfd.uploadprovider.s3.bucket | string | `""` | AWS S3 bucket name |
-| ctfd.uploadprovider.s3.enabled | bool | `false` | Enables AWS S3 upload provider. Please enable only one upload provider |
 | ctfd.uploadprovider.s3.endpoint_url | string | `""` | AWS S3 bucket region |
 | ctfd.uploadprovider.s3.secret_access_key | string | `""` | AWS S3 bucket access key |
 | ctfd.volumeMounts | list | `[]` | CTFd volumeMounts |
@@ -124,8 +119,12 @@ helm uninstall ctfd --namespace ctfd
 | mariadb.external | object | ignored | External database connection details. Takes effect if `mariadb.enabled` is set to false |
 | mariadb.metrics.enabled | bool | `true` |  |
 | mariadb.primary.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
+| mariadb.primary.persistence.enabled | bool | `true` |  |
+| mariadb.primary.persistence.size | string | `"2Gi"` |  |
 | mariadb.primary.resourcePreset | string | `"small"` |  |
 | mariadb.secondary.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
+| mariadb.secondary.persistence.enabled | bool | `true` |  |
+| mariadb.secondary.persistence.size | string | `"2Gi"` |  |
 | mariadb.secondary.replicaCount | int | `1` |  |
 | mariadb.secondary.resourcePreset | string | `"small"` |  |
 | mariadb.volumePermissions.enabled | bool | `true` |  |
@@ -133,13 +132,29 @@ helm uninstall ctfd --namespace ctfd
 | redis.enabled | bool | `true` | Deploys bitnami's redis (set to false if you want to use an external cache) |
 | redis.external | object | ignored | External redis cache connection details. Takes effect if `redis.enabled` is set to false |
 | redis.master.count | int | `1` |  |
+| redis.master.persistence.enabled | bool | `false` |  |
 | redis.master.resourcesPreset | string | `"micro"` |  |
 | redis.metrics.enabled | bool | `true` |  |
 | redis.replica.autoscaling.enabled | bool | `true` |  |
 | redis.replica.autoscaling.targetCPU | string | `"80"` |  |
+| redis.replica.persistence.enabled | bool | `false` |  |
 | redis.replica.resourcesPreset | string | `"micro"` |  |
 | redis.sysctl.enabled | bool | `true` |  |
 | redis.volumePermissions.enabled | bool | `true` |  |
+| seaweedfs.enabled | bool | `true` | Deploys seaweedfs (set to false if you want to use an bucket) |
+| seaweedfs.filer.data.size | string | `"5Gi"` | seaweedfs-filer storage size |
+| seaweedfs.filer.data.type | string | `"persistentVolumeClaim"` | seaweedfs-filer data storage type |
+| seaweedfs.filer.enablePVC | bool | `true` | seaweedfs-filer enable PVC for data persistence |
+| seaweedfs.filer.replicas | int | `3` | seaweedfs-filer replicas |
+| seaweedfs.filer.s3.createBuckets | list | `[{"name":"ctfd-bucket"}]` | seaweedfs-s3 create bucket upon deploying |
+| seaweedfs.filer.s3.enableAuth | bool | `false` | seaweedfs-s3 enable authentication (no need since seaweed is private to the cluster) |
+| seaweedfs.filer.s3.enabled | bool | `true` | seaweedfs-s3 enable (Should be left to `true`) |
+| seaweedfs.filer.storage | string | `"5Gi"` | seaweedfs-filer PVC storage size |
+| seaweedfs.master.data.size | string | `"5Gi"` | seaweedfs storage size |
+| seaweedfs.master.data.type | string | `"persistentVolumeClaim"` | seaweedfs data storage type |
+| seaweedfs.master.replicas | int | `3` | seaweedfs-master replicas |
+| seaweedfs.volume.dataDirs | list | Check `values.yaml` | seaweedfs dataDirs |
+| seaweedfs.volume.replicas | int | `3` | seaweedfs-volume replicas |
 
 ## NOTES
 

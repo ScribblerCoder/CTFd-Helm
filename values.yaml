@@ -208,12 +208,18 @@ mariadb:
     # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
     extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
     resourcePreset: small
+    persistence:
+      enabled: true
+      size: 2Gi
   secondary:
     # -- MariaDB primary entrypoint extra flags
     # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
     extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
     resourcePreset: small  # more taiored resources are needed
     replicaCount: 1
+    persistence:
+      enabled: true
+      size: 2Gi
   metrics:
     enabled: true  # prometheus metrics exporter
 
@@ -237,10 +243,14 @@ redis:
   master:
     count: 1  # higher values are experimental
     resourcesPreset: micro  # more tailored resources are needed
+    persistence:
+      enabled: false
   replica:
     autoscaling:
       enabled: true
       targetCPU: "80"
+    persistence:
+      enabled: false
     resourcesPreset: micro
   metrics:
     enabled: true  # prometheus metrics exporter
@@ -257,12 +267,29 @@ seaweedfs:
       type: "persistentVolumeClaim"
       # -- seaweedfs storage size
       size: 5Gi
-  # -- seaweedfs-volume replicas
+
   volume:
+    # -- seaweedfs-volume replicas
     replicas: 3
+    # -- seaweedfs dataDirs
+    # @default -- Check `values.yaml`
+    dataDirs:
+      - name: data
+        type: "persistentVolumeClaim"
+        size: 5Gi
+
   filer:
     # -- seaweedfs-filer replicas
     replicas: 3
+    # -- seaweedfs-filer enable PVC for data persistence
+    enablePVC: true
+    # -- seaweedfs-filer PVC storage size
+    storage: 5Gi
+    data:
+      # -- seaweedfs-filer data storage type
+      type: "persistentVolumeClaim"
+      # -- seaweedfs-filer storage size
+      size: 5Gi
     s3:
       # -- seaweedfs-s3 enable (Should be left to `true`)
       enabled: true
