@@ -35,8 +35,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "ctfd.serviceAccountName" . }}
+      {{- with .Values.ctfd.podSecurityContext}}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.ctfd.podSecurityContext | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -60,7 +62,7 @@ spec:
             {{- toYaml .Values.ctfd.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.ctfd.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+          {{- with .Values.ctfd.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -68,7 +70,7 @@ spec:
       initContainers:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.volumes }}
+      {{- with .Values.ctfd.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}

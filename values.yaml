@@ -173,6 +173,12 @@ ctfd:
   # -- CTFd pod security context
   podSecurityContext: {}
 
+  # -- CTFd volumes
+  volumes: []
+
+  # --  CTFd volumeMounts
+  volumeMounts: []
+
   serviceAccount:
     # Specifies whether a service account should be created
     # -- creates a CTFd service account
