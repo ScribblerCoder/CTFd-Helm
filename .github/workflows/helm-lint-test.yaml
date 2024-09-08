@@ -1,4 +1,4 @@
-name: Lint and Server-side Dryrun Chart
+name: Lint and server-side dry-run
 
 on: 
   push:
