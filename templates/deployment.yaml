@@ -58,8 +58,13 @@ spec:
             {{- toYaml .Values.ctfd.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.ctfd.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+          
           volumeMounts:
+          {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
+            - name: uploads
+              mountPath: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
