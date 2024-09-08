@@ -56,8 +56,8 @@ helm uninstall ctfd --namespace ctfd
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.bitnami.com/bitnami | mariadb | 18.0.2 |
-| https://charts.bitnami.com/bitnami | redis | 19.2.0 |
+| https://charts.bitnami.com/bitnami | mariadb | 19.0.5 |
+| https://charts.bitnami.com/bitnami | redis | 20.0.5 |
 
 ## Values
 
@@ -77,10 +77,11 @@ helm uninstall ctfd --namespace ctfd
 | ctfd.ingress.annotations | object | `{}` | Ingress annotations |
 | ctfd.ingress.className | string | `""` | Ingress class |
 | ctfd.ingress.enabled | bool | `false` | Enables ingress |
+| ctfd.initContainers | list | `[]` |  |
 | ctfd.livenessProbe | object | Check `values.yaml` | CTFd readiness probe |
 | ctfd.nameOverride | string | `""` | Chart name override |
 | ctfd.nodeSelector | object | `{}` | CTFd node selector |
-| ctfd.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the application controller |
+| ctfd.pdb.enabled | bool | `true` | Deploy a [PodDisruptionBudget] for the application controller |
 | ctfd.pdb.maxUnavailable | string | `"50%"` | Number of pods that are unavailable after eviction as number or percentage (eg.: 50%). # Has higher precedence over `controller.pdb.minAvailable` |
 | ctfd.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | ctfd.podAnnotations | object | `{}` | CTFd pod annotations |
@@ -92,7 +93,7 @@ helm uninstall ctfd --namespace ctfd
 | ctfd.resources.limits.cpu | string | `"2"` | CTFd pod CPU limit |
 | ctfd.resources.limits.memory | string | `"2Gi"` | CTFd pod memory limit |
 | ctfd.resources.requests.cpu | string | `"1"` | CTFd pod CPU request |
-| ctfd.resources.requests.memory | string | `"512Mi"` | CTFd pod memory request |
+| ctfd.resources.requests.memory | string | `"1Gi"` | CTFd pod memory request |
 | ctfd.securityContext.runAsNonRoot | bool | `true` |  |
 | ctfd.securityContext.runAsUser | int | `1001` |  |
 | ctfd.serviceAccount.annotations | object | `{}` | CTFd service account annotations |
@@ -102,15 +103,19 @@ helm uninstall ctfd --namespace ctfd
 | ctfd.tolerations | list | `[]` | CTFd tolerations |
 | ctfd.updateStrategy.maxSurge | int | `2` | CTFd update strategy rolling update max surge (extra pods during rolling update) |
 | ctfd.updateStrategy.maxUnavailable | string | `"25%"` | CTFd update strategy rolling update max unavailable pods count |
-| ctfd.uploadprovider.filesystem.enabled | bool | `true` | Enable file system upload provider (Persistent Volume) |
-| ctfd.uploadprovider.filesystem.size | string | `"8Gi"` | Uploads folder size |
-| ctfd.uploadprovider.filesystem.storageClassName | string | `""` | Storage class name |
-| ctfd.uploadprovider.filesystem.upload_folder | string | `"/var/uploads"` | Uploads folder path. This is where the CTFd attachments are stored |
+| ctfd.uploadprovider.minio.access_key | string | `""` | Minio bucket access key |
+| ctfd.uploadprovider.minio.bucket | string | `""` | Minio bucket name |
+| ctfd.uploadprovider.minio.enabled | bool | `false` | Installs minio (compatible with ctfd s3 plugin). Please enable only one upload provider |
+| ctfd.uploadprovider.minio.region | string | `""` | Minio bucket region |
+| ctfd.uploadprovider.minio.secret_key | string | `""` | Minio bucket secret key |
 | ctfd.uploadprovider.s3.access_key_id | string | `""` | AWS S3 bucket secret key id |
 | ctfd.uploadprovider.s3.bucket | string | `""` | AWS S3 bucket name |
-| ctfd.uploadprovider.s3.enabled | bool | `false` | Enables AWS S3 upload provider. If enabled, filesystem upload provider must be disabled |
+| ctfd.uploadprovider.s3.enabled | bool | `false` | Enables AWS S3 upload provider. Please enable only one upload provider |
 | ctfd.uploadprovider.s3.endpoint_url | string | `""` | AWS S3 bucket region |
 | ctfd.uploadprovider.s3.secret_access_key | string | `""` | AWS S3 bucket access key |
+| ctfd.volumeMounts | list | `[]` | CTFd volumeMounts |
+| ctfd.volumes | list | `[]` | CTFd volumes |
+| mariadb.architecture | string | `"standalone"` | MariaDB Architecture (`standalone`, `replication`) |
 | mariadb.auth.database | string | `"ctfd"` |  |
 | mariadb.auth.password | string | `"ctfd"` |  |
 | mariadb.auth.rootPassword | string | `"ctfd"` |  |
@@ -118,10 +123,10 @@ helm uninstall ctfd --namespace ctfd
 | mariadb.enabled | bool | `true` | Deploys bitnami's mariadb (set to false if you want to use an external database) |
 | mariadb.external | object | ignored | External database connection details. Takes effect if `mariadb.enabled` is set to false |
 | mariadb.metrics.enabled | bool | `true` |  |
-| mariadb.primary.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml`  | MariaDB primary entrypoint extra flags |
+| mariadb.primary.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
 | mariadb.primary.resourcePreset | string | `"small"` |  |
-| mariadb.secondary.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml`  | MariaDB primary entrypoint extra flags |
-| mariadb.secondary.replicaCount | int | `2` |  |
+| mariadb.secondary.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
+| mariadb.secondary.replicaCount | int | `1` |  |
 | mariadb.secondary.resourcePreset | string | `"small"` |  |
 | mariadb.volumePermissions.enabled | bool | `true` |  |
 | redis.auth.enabled | bool | `false` |  |
@@ -131,16 +136,15 @@ helm uninstall ctfd --namespace ctfd
 | redis.master.resourcesPreset | string | `"micro"` |  |
 | redis.metrics.enabled | bool | `true` |  |
 | redis.replica.autoscaling.enabled | bool | `true` |  |
-| redis.replica.autoscaling.targetCPU | int | `80` |  |
+| redis.replica.autoscaling.targetCPU | string | `"80"` |  |
 | redis.replica.resourcesPreset | string | `"micro"` |  |
 | redis.sysctl.enabled | bool | `true` |  |
 | redis.volumePermissions.enabled | bool | `true` |  |
 
 ## NOTES
 
-- CTFd `SECRET_KEY` is automatically generated during installation. You can find it in the secret `ReleaseName-ctfd`. This secret is shared with all CTFd pods to allow
-- MariaDB in this chart has one primary and one secondary replica. The primary replica is used for read/write operations, while the secondary replica is used for read-only operations. The secondary replica is not used by CTFd.
+- CTFd `SECRET_KEY` is automatically generated during installation. You can find it in the secret `ReleaseName-ctfd-secret-key`. This secret is shared with all CTFd pods
 - Redis in this chart uses single master with multiple workers.
 
 ----------------------------------------------
-Autogenerated from chart metadata using [helm-docs v1.13.1](https://github.com/norwoodj/helm-docs/releases/v1.13.1)
+Autogenerated from chart metadata using [helm-docs v1.14.2](https://github.com/norwoodj/helm-docs/releases/v1.14.2)

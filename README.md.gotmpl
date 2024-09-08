@@ -62,8 +62,7 @@ helm uninstall ctfd --namespace ctfd
 
 ## NOTES
 
-- CTFd `SECRET_KEY` is automatically generated during installation. You can find it in the secret `ReleaseName-ctfd`. This secret is shared with all CTFd pods to allow 
-- MariaDB in this chart has one primary and one secondary replica. The primary replica is used for read/write operations, while the secondary replica is used for read-only operations. The secondary replica is not used by CTFd.
+- CTFd `SECRET_KEY` is automatically generated during installation. You can find it in the secret `ReleaseName-ctfd-secret-key`. This secret is shared with all CTFd pods
 - Redis in this chart uses single master with multiple workers.
 
 

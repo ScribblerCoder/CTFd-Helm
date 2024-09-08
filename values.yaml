@@ -104,7 +104,6 @@ ctfd:
 
   pdb:
     # -- Deploy a [PodDisruptionBudget] for the application controller
-    # @default -- `enabled: true`
     enabled: true
     # -- Number of pods that are available after eviction as number or percentage (eg.: 50%)
     # @default -- `""` (defaults to 0 if not specified)
@@ -119,7 +118,7 @@ ctfd:
     port: 8000
 
   # CTFd security context
-  # @default -- Check `values.yaml`
+  # @default -- Check `values.yaml`. Runs as CTFd user
   securityContext:
     runAsNonRoot: true
     runAsUser: 1001
@@ -199,7 +198,6 @@ mariadb:
   # -- Deploys bitnami's mariadb (set to false if you want to use an external database)
   enabled: true
   # -- MariaDB Architecture (`standalone`, `replication`)
-  # @default -- `standalone`
   architecture: standalone
   auth:
     rootPassword: ctfd
