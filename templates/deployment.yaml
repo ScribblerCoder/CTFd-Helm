@@ -61,10 +61,6 @@ spec:
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
-            {{ if and .Values.ctfd.uploadprovider.filesystem.enabled }}
-            - name: uploads
-              mountPath: {{ .Values.ctfd.uploadprovider.filesystem.upload_folder }}
-            {{- end }}
           {{- end }}
       {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
       initContainers:
