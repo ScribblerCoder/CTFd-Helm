@@ -26,29 +26,28 @@ helm uninstall ctfd --namespace ctfd
 
 - [x] HA and horizontal autoscaling with CPU and memory metrics
 - [x] Configurable CPU/memory requests and limits
-- [x] Deploys bitnami Redis and bitnami MariaDB as Helm dependencies
+- [x] Deploys bitnami Redis, bitnami MariaDB and SeaweedFS S3 as Helm dependencies
 - [x] Option to use external Redis and MariaDB (e.g., AWS RDS, ElastiCache)
 - [x] Customizable CTFd configuration
 - [x] Adjustable configurations for Redis and MariaDB
-- [x] Integration with external storage as upload provider (AWS S3 or Persistent Volumes)
+- [x] Integration with external storage as upload provider (AWS S3 or SeaweedFS or any otherr S3 compatible storage)
 - [x] Liveness and Readiness checks
 - [x] Affinity/Toleration/nodeSelector rules
-- [ ] Autoscaling with custom metrics
 - [ ] Deploy self-hosted mail server for CTFd email notifications as a helm dependency
 - [ ] Automated backups (CTFd export. This could be done with batch/v1 CronJob)
 - [ ] Deploys postgres db as a helm dependency
 
 ## To Do
 
-- [ ] Performance testing to verify autoscaling capabilities + e2e testing
-- [ ] Fine tune cpu/mem requests and limits
+- [ ] Performance testing to verify autoscaling capabilities + e2e testing for verification
+- [x] Fine tune cpu/mem requests and limits
 - [ ] Chaos testing to verify HA capabilities
 - [x] Add Pod Disruption budget (Added a rolling update strategy instead)
 - [ ] Security testing to verify deployment security
 - [x] Helm linting and testing with GitHub Actions (status badge remaining)
 - [ ] Publish Helm chart to Artifact Hub
 - [x] Custom NOTES.txt (post-installation message)
-- [ ] Add custom metrics for autoscaling
+- [ ] Support custom metrics for autoscaling
 - [x] Fancier README.md with badges and more information
 - [x] Add Chart Values table to README.md
 
@@ -148,12 +147,11 @@ helm uninstall ctfd --namespace ctfd
 | seaweedfs.filer.replicas | int | `3` | seaweedfs-filer replicas |
 | seaweedfs.filer.s3.createBuckets | list | `[{"name":"ctfd-bucket"}]` | seaweedfs-s3 create bucket upon deploying |
 | seaweedfs.filer.s3.enableAuth | bool | `false` | seaweedfs-s3 enable authentication (no need since seaweed is private to the cluster) |
-| seaweedfs.filer.s3.enabled | bool | `true` | seaweedfs-s3 enable (Should be left to `true`) |
+| seaweedfs.filer.s3.enabled | bool | `true` | seaweedfs-s3 enable. This enables S3 API (Should be left to `true`) |
 | seaweedfs.filer.storage | string | `"5Gi"` | seaweedfs-filer PVC storage size |
 | seaweedfs.master.data.size | string | `"5Gi"` | seaweedfs storage size |
 | seaweedfs.master.data.type | string | `"persistentVolumeClaim"` | seaweedfs data storage type |
 | seaweedfs.master.replicas | int | `3` | seaweedfs-master replicas |
-| seaweedfs.volume.dataDirs | list | Check `values.yaml` | seaweedfs dataDirs |
 | seaweedfs.volume.replicas | int | `3` | seaweedfs-volume replicas |
 
 ## NOTES

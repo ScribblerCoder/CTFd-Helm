@@ -271,13 +271,7 @@ seaweedfs:
   volume:
     # -- seaweedfs-volume replicas
     replicas: 3
-    # -- seaweedfs dataDirs
-    # @default -- Check `values.yaml`
-    dataDirs:
-      - name: data
-        type: "persistentVolumeClaim"
-        size: 5Gi
-
+    
   filer:
     # -- seaweedfs-filer replicas
     replicas: 3
@@ -291,7 +285,7 @@ seaweedfs:
       # -- seaweedfs-filer storage size
       size: 5Gi
     s3:
-      # -- seaweedfs-s3 enable (Should be left to `true`)
+      # -- seaweedfs-s3 enable. This enables S3 API (Should be left to `true`)
       enabled: true
       # -- seaweedfs-s3 enable authentication (no need since seaweed is private to the cluster)
       enableAuth: false
