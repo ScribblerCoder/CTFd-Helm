@@ -51,30 +51,19 @@ ctfd:
       value: "true"
     - name: LOG_FOLDER
       value: "/var/log/CTFd"
+    - name: UPLOAD_PROVIDER
+      value: "s3"
 
   uploadprovider:
     s3:
-      # -- Enables AWS S3 upload provider. Please enable only one upload provider
-      enabled: false
       # -- AWS S3 bucket name
-      bucket: ""
+      bucket: ""  # external bucket (seaweedfs must be disabled)
       # -- AWS S3 bucket region
       endpoint_url: ""
       # -- AWS S3 bucket access key
       secret_access_key: ""
       # -- AWS S3 bucket secret key id
       access_key_id: ""
-    minio:
-      # -- Installs minio (compatible with ctfd s3 plugin). Please enable only one upload provider
-      enabled: false
-      # -- Minio bucket name
-      bucket: ""
-      # -- Minio bucket region
-      region: ""
-      # -- Minio bucket access key
-      access_key: ""
-      # -- Minio bucket secret key
-      secret_key: ""
 
   ingress:
     # -- Enables ingress
@@ -255,3 +244,21 @@ redis:
     resourcesPreset: micro
   metrics:
     enabled: true  # prometheus metrics exporter
+
+# Override the seaweedfs subchart values
+seaweedfs:
+  enabled: true # set to false if you want to use an external bucket
+  master:
+    replicas: 3
+    data:
+      type: "persistentVolumeClaim"
+      size: 5Gi
+  volume:
+    replicas: 3
+  filer:
+    replicas: 3
+    s3:
+      enabled: true
+      enableAuth: false
+      createBuckets:
+        - name: ctfd-bucket
