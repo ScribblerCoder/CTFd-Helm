@@ -49,4 +49,4 @@ jobs:
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
-          ct install --chart-dirs . --charts .
+          helm template . -f values.yaml | kubectl apply --dry-run=server -f -
