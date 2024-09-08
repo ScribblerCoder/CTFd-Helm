@@ -50,7 +50,7 @@ ctfd:
     - name: REVERSE_PROXY
       value: "true"
     - name: LOG_FOLDER
-      value: "/var/log/ctfd"
+      value: "/var/log/CTFd"
 
   uploadprovider:
     filesystem:

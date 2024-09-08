@@ -67,10 +67,6 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
       initContainers:
-        - name: ctfd-init-logs-permissions
-          image: busybox:1.28
-          imagePullPolicy: IfNotPresent
-          command: ["sh", "-c", "chown -R 1001:1001 {{ .Values.ctfd.env.CTFD_LOG_FOLDER }}"]
       {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
         - name: ctfd-init-uploads-permissions
           image: busybox:1.28
