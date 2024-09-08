@@ -68,9 +68,9 @@ Create the name of the service account to use
 {{- define "ctfd.SECRET_KEY" -}}
 {{- $SECRET_KEY := lookup "v1" "Secret" .Release.Namespace (include "ctfd.fullname" .) -}}
 {{- if $SECRET_KEY -}}
-{{ $SECRET_KEY.data.SECRET_KEY }}
+WE FOUND IT
 {{- else -}}
-{{ randAlphaNum 64 }}
+WE DIDNT FIND IT
 {{- end -}}
 {{- end -}}
 
