@@ -66,11 +66,11 @@ Create the name of the service account to use
    Generate CTFd SECRET_KEY
 */}}
 {{- define "ctfd.SECRET_KEY" -}}
-{{- $SECRET_KEY := lookup "v1" "Secret" .Release.Namespace (include "ctfd.fullname" .) -}}
-{{- if $SECRET_KEY -}}
+{{- $SECRETKEY := lookup "v1" "Secret" .Release.Namespace (include "ctfd.fullname" .) -}}
+{{- if $SECRETKEY -}}
 WE FOUND IT
 {{- else -}}
-{{ $SECRET_KEY.data.SECRET_KEY }}
+{{ $SECRETKEY.data.SECRET_KEY }}
 {{- end -}}
 {{- end -}}
 
