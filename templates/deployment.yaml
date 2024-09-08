@@ -58,7 +58,6 @@ spec:
             {{- toYaml .Values.ctfd.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.ctfd.resources | nindent 12 }}
-          
           volumeMounts:
           {{- if and .Values.ctfd.uploadprovider.filesystem.enabled }}
             - name: uploads
