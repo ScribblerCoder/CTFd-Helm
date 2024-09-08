@@ -63,6 +63,20 @@ Create the name of the service account to use
 
 
 {{/*
+   Generate CTFd SECRET_KEY
+*/}}
+{{- define "ctfd.SECRET_KEY" -}}
+{{- $SECRET_KEY := lookup "v1" "Secret" .Release.Namespace (include "ctfd.fullname" .) -}}
+{{- if $SECRET_KEY -}}
+{{ $SECRET_KEY.data.SECRET_KEY }}
+{{- else -}}
+{{ randAlphaNum 64 }}
+{{- end -}}
+{{- end -}}
+
+
+
+{{/*
    Generate CTFd DATABASE_URL (internal bitnami mariadb or external self managed mariadb)
 */}}
 {{- define "ctfd.DATABASE_URL" -}}
