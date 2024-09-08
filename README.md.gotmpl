@@ -38,6 +38,7 @@ helm uninstall ctfd --namespace ctfd
 - [ ] Deploys self-hosted mail server for CTFd email notifications as a helm dependency
 - [ ] Automated backups (CTFd export. This could be done with batch/v1 CronJob)
 - [ ] Deploys postgres db as a helm dependency
+- [ ] Support for custom CTFd themes/plugin
 
 ## To Do
 
@@ -52,6 +53,7 @@ helm uninstall ctfd --namespace ctfd
 - [ ] Support custom metrics for autoscaling
 - [x] Fancier README.md with badges and more information
 - [x] Add Chart Values table to README.md
+- [ ] Support custom CTFd themes/plugin
 
 {{ template "chart.maintainersSection" . }}
 
@@ -66,5 +68,6 @@ helm uninstall ctfd --namespace ctfd
 - CTFd `SECRET_KEY` is automatically generated during installation. You can find it in the secret `ReleaseName-ctfd-secret-key`. This secret is added as environment variable in all CTFd pods.
 - Redis in this chart uses single master with multiple workers.
 - This chart deploys SeaweedFS S3 as an upload provider. You can use AWS S3 or any other external S3 compatible storage as an upload provider. Just set `seaweedfs.enabled` to `false` and configure the external S3 provider in `uploadprovider.s3`.
+- This chart does not support `filesystem` upload provider intentionally. ReadWriteMany PVCs are expensive and not recommended for production use. S3 is faster and more scalable.
 
 {{ template "helm-docs.versionFooter" . }}

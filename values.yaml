@@ -42,7 +42,7 @@ ctfd:
   # @ignored
   env:
     - name: WORKERS
-      value: "2"  # let HPA handle autoscaling
+      value: "2"  # let HPA handle autoscaling instead of increasing workers inside the same pod
     - name: ACCESS_LOG
       value: "-"
     - name: ERROR_LOG
