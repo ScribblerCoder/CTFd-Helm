@@ -2,7 +2,7 @@
 ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.7.3](https://img.shields.io/badge/AppVersion-3.7.3-informational?style=flat-square)
 [![Lint and Server-side Dryrun Chart](https://github.com/ScribblerCoder/CTFd-Helm/actions/workflows/helm-lint-test.yaml/badge.svg)](https://github.com/ScribblerCoder/CTFd-Helm/actions/workflows/helm-lint-test.yaml)
 
-This is a Helm chart for deploying CTFd on Kubernetes. It is deploys the official [CTFd Docker image](ghcr.io/ctfd/ctfd). HA and Autoscaling + MariaDB + Redis + S3 Storage. Also supports using external MariaDB/Redis/S3.
+This is a Helm chart for deploying CTFd on Kubernetes. It deploys the official [CTFd Docker image](ghcr.io/ctfd/ctfd). HA and Autoscaling + MariaDB + Redis + S3 Storage. Also supports using external MariaDB/Redis/S3.
 
 ## Add the helm repo
 ```bash
