@@ -135,7 +135,27 @@ ctfd:
     successThreshold: 1
     failureThreshold: 5
 
-  initContainers: []
+  initContainers:
+    - name: clone-themes
+      image: alpine/git:latest
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          git clone https://github.com/0xPb1/my-ctfd-themes.git /temp-themes &&
+          cp -r /temp-themes/* /mnt/themes/;
+      volumeMounts:
+        - name: themes
+          mountPath: /mnt/themes
+
+  # -- CTFd volumes
+  volumes:
+    - name: themes
+      emptyDir: {}
+
+  # # --  CTFd volumeMounts
+  volumeMounts:
+    - name: themes
+      mountPath: /opt/CTFd/CTFd/themes
 
   # -- Chart name override
   nameOverride: ""
@@ -159,12 +179,6 @@ ctfd:
 
   # -- CTFd pod security context
   podSecurityContext: {}
-
-  # -- CTFd volumes
-  volumes: []
-
-  # --  CTFd volumeMounts
-  volumeMounts: []
 
   serviceAccount:
     # Specifies whether a service account should be created
