@@ -2,6 +2,30 @@ apiVersion: v1
 entries:
   ctfd:
   - apiVersion: v2
+    created: "2024-10-09T22:57:02.095022667+03:00"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.0.5
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.0.5
+    - condition: seaweedfs.enabled
+      name: seaweedfs
+      repository: https://seaweedfs.github.io/seaweedfs/helm
+      version: 4.0.0
+    description: A Helm chart to deploy CTFd on Kubernetes. HA/Autoscaling + MariaDB
+      + Redis + SeaweedFS S3
+    digest: fc1d986bff335ba5ff14e71993fb295e91b6d1b985948845a1fd2bd182186323
+    icon: https://ctfd.io/static/img/ctfd.svg
+    name: ctfd
+    type: application
+    urls:
+    - ctfd-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     appVersion: 3.7.3
     created: "2024-09-10T17:47:20.418667165+03:00"
     dependencies:
@@ -26,4 +50,4 @@ entries:
     urls:
     - ctfd-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-10T17:47:20.418670674+03:00"
+generated: "2024-10-09T22:57:02.095027597+03:00"
