@@ -4,9 +4,9 @@ ctfd:
     repository: ghcr.io/ctfd/ctfd
     # -- image pull policy. One of Always, Never, IfNotPresent
     pullPolicy: IfNotPresent
-    # -- Overrides the image tag (version)
-    # @default -- `appVersion`
-    tag: ""
+    # -- CTFd image tag (check https://github.com/CTFd/CTFd/pkgs/container/ctfd)
+    # @default -- `latest`
+    tag: "latest"
   # -- Image pull secrets (use this for private repos)
   imagePullSecrets: []
 
