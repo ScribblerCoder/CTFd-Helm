@@ -1,0 +1,45 @@
+name: "Update README on gh-pages"
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'README.md'
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the main branch
+      uses: actions/checkout@v3
+      with:
+        ref: 'main'
+    
+    - name: Copy README.md to a temporary directory
+      run: |
+        mkdir tmp
+        cp README.md /tmp/README.md
+
+    - name: Checkout gh-pages branch
+      uses: actions/checkout@v3
+      with:
+        ref: 'gh-pages'
+        path: 'gh-pages'
+    
+    - name: Replace README.md on gh-pages
+      run: |
+        cp /tmp/README.md gh-pages/README.md
+    
+    - name: Commit and push changes
+      working-directory: ./gh-pages
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add README.md
+        git commit -m "Update README.md"
+        git push
