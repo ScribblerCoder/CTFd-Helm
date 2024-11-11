@@ -47,7 +47,7 @@ helm uninstall release-name --namespace ctfd
 ```yaml
 ctfd:
   image:
-    tag: "3.7.3"
+    tag: "latest"
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -69,7 +69,7 @@ seaweedfs:
 ```yaml
 ctfd:
   image:
-    tag: "3.7.3"
+    tag: "latest"
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -103,7 +103,7 @@ seaweedfs:
 ```yaml
 ctfd:
   image:
-    tag: "3.7.3"
+    tag: "latest"
   replicas: 2
   autoscaling:
     enabled: false
