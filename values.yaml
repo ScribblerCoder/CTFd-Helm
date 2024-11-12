@@ -66,7 +66,7 @@ ctfd:
 
   ingress:
     # -- Enables ingress
-    enabled: false
+    enabled: true
     # -- Ingress class
     className: ""
     # -- Ingress annotations
@@ -75,7 +75,7 @@ ctfd:
       # kubernetes.io/tls-acme: "true"
     # @ignored
     hosts:
-      - host: ctfd.local
+      - host: ctfd.example.com
         paths:
           - path: /
             pathType: ImplementationSpecific
@@ -182,16 +182,27 @@ ctfd:
     name: ""
 
 # Override the mariadb subchart values
-mariadb:
-  # -- Deploys bitnami's mariadb (set to false if you want to use an external database)
+mariadb-galera:
+  # -- Deploys bitnami's mariadb-galera (set to false if you want to use an external database)
   enabled: true
-  # -- MariaDB Architecture (`standalone`, `replication`)
-  architecture: standalone
-  auth:
-    rootPassword: ctfd
-    username: ctfd
+  db:
+    user: ctfd
     password: ctfd
-    database: ctfd
+    name: ctfd
+  galera:
+    mariabackup:
+      password: ctfd
+  rootUser:
+    password: ctfd
+  resourcesPreset: large
+  persistence:
+    enabled: true
+    size: 2Gi
+  # -- MariaDB primary entrypoint extra flags
+  # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
+  extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
+  metrics:
+    enabled: true  # prometheus metrics exporter
   # -- External database connection details. Takes effect if `mariadb.enabled` is set to false
   # @default -- ignored
   external:
@@ -200,29 +211,6 @@ mariadb:
     username: ""
     password: ""
     database: ""
-  volumePermissions:
-    enabled: true  # set to false if you want to manage the permissions yourself
-  primary:
-    # -- MariaDB primary entrypoint extra flags
-    # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
-    extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
-    # -- Check Bintami's documentation
-    resourcesPreset: small
-    persistence:
-      enabled: true
-      size: 2Gi
-  secondary:
-    # -- MariaDB primary entrypoint extra flags
-    # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
-    extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
-    # -- Check Bintami's documentation
-    resourcesPreset: small
-    replicaCount: 1
-    persistence:
-      enabled: true
-      size: 2Gi
-  metrics:
-    enabled: true  # prometheus metrics exporter
 
 # Override the redis subchart values (I am considering the switch from redis to redis-ha)
 redis:

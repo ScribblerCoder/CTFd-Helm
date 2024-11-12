@@ -17,10 +17,10 @@
 ░░░░▒▓█████████▓▒░░░░░░░░░░██▓░░░░░░░░░▒██░░░░░░░░░░░░░░▓███████░░█▒░░░░░░░░░░░░
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-                                                                     CTFd v{{ .Values.ctfd.image.tag | default .Chart.AppVersion }}
+                                                                     version: {{ .Values.ctfd.image.tag | default .Chart.AppVersion }}
 
 
-{{ if or .Values.mariadb.enabled .Values.redis.enabled -}}
+{{ if or (index .Values "mariadb-galera" "enabled") (.Values.redis.enabled) -}}
 ** Please be patient while MariaDB or Redis are being deployed **
 {{ end }}
 

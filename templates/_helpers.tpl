@@ -62,13 +62,13 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-   Generate CTFd DATABASE_URL (internal bitnami mariadb or external self managed mariadb)
+   Generate CTFd DATABASE_URL (internal bitnami mariadb-galera or external self managed mariadb-galera)
 */}}
 {{- define "ctfd.DATABASE_URL" -}}
-{{- if .Values.mariadb.enabled -}}
-mysql+pymysql://{{ .Values.mariadb.auth.username | default "ctfd" }}:{{ .Values.mariadb.auth.password | default "ctfd" }}@{{ .Release.Name }}-mariadb{{ if eq .Values.mariadb.architecture "replication" }}-primary{{ end }}/{{ .Values.mariadb.auth.database | default "ctfd" }}
+{{- if index .Values "mariadb-galera" "enabled" -}}
+mysql+pymysql://{{ index .Values "mariadb-galera" "db" "user" | default "ctfd" }}:{{ index .Values "mariadb-galera" "db" "password" | default "ctfd" }}@{{ .Release.Name }}-mariadb-galera/{{ index .Values "mariadb-galera" "db" "name"| default "ctfd" }}
 {{- else -}}
-mysql+pymysql://{{ .Values.mariadb.external.username }}:{{ .Values.mariadb.external.password }}@{{ .Values.mariadb.external.host }}/{{ .Values.mariadb.external.database }}
+mysql+pymysql://{{ index .Values "mariadb-galera" "external" "username" }}:{{ index .Values "mariadb-galera" "external" "password" }}@{{ index .Values "mariadb-galera" "external" "host" }}/{{ index .Values "mariadb-galera" "external" "database" }}
 {{- end -}}
 {{- end -}}
 
