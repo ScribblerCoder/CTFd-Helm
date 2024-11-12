@@ -215,7 +215,7 @@ mariadb-galera:
 # Override the redis-ha subchart values
 redis-ha:
   # -- Enables the Redis HA subchart and disables the custom Redis single node deployment
-  enabled: false
+  enabled: true # set to false if you want to use an external redis
   ## Redis image
   image:
     # -- Redis repository
