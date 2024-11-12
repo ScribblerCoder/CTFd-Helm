@@ -212,6 +212,35 @@ mariadb-galera:
     password: ""
     database: ""
 
+# Override the redis-ha subchart values
+redis-ha:
+  # -- Enables the Redis HA subchart and disables the custom Redis single node deployment
+  enabled: false
+  ## Redis image
+  image:
+    # -- Redis repository
+    repository: public.ecr.aws/docker/library/redis
+    # -- Redis tag
+    tag: 7.4.1-alpine
+  ## Prometheus redis-exporter sidecar
+  exporter:
+    # -- Enable Prometheus redis-exporter sidecar
+    enabled: false
+    # -- Repository to use for the redis-exporter
+    image: public.ecr.aws/bitnami/redis-exporter
+    # -- Tag to use for the redis-exporter
+    tag: 1.58.0
+  persistentVolume:
+    # -- Configures persistence on Redis nodes
+    enabled: false
+  # -- External redis cache connection details. Takes effect if `redis.enabled` is set to false
+  # @default -- ignored
+  external:
+    port: 6379
+    host: external-redis-host
+    username: ""
+    password: ""
+
 # Override the redis subchart values (I am considering the switch from redis to redis-ha)
 redis:
   # -- Deploys bitnami's redis (set to false if you want to use an external cache)

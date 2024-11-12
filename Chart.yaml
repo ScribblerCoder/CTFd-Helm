@@ -9,10 +9,10 @@ version: 0.2.0
 
 # Redis, MySQL/MariaDB and Seaweedfs
 dependencies:
-  - name: redis
-    version: 20.0.5
-    repository: https://charts.bitnami.com/bitnami
-    condition: redis.enabled
+  - name: redis-ha
+    version: 4.27.6
+    repository: https://dandydeveloper.github.io/charts/
+    condition: redis-ha.enabled
   - name: mariadb-galera
     version: 14.0.12
     repository: https://charts.bitnami.com/bitnami
