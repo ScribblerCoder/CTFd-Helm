@@ -13,10 +13,10 @@ dependencies:
     version: 20.0.5
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
-  - name: mariadb
-    version: 19.0.5
+  - name: mariadb-galera
+    version: 14.0.12
     repository: https://charts.bitnami.com/bitnami
-    condition: mariadb.enabled
+    condition: mariadb-galera.enabled
   - name: seaweedfs
     version: 4.0.0
     repository: https://seaweedfs.github.io/seaweedfs/helm
