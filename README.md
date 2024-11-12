@@ -153,7 +153,7 @@ ctfd:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.bitnami.com/bitnami | mariadb | 19.0.5 |
+| https://charts.bitnami.com/bitnami | mariadb-galera | 14.0.12 |
 | https://charts.bitnami.com/bitnami | redis | 20.0.5 |
 | https://seaweedfs.github.io/seaweedfs/helm | seaweedfs | 4.0.0 |
 
@@ -174,7 +174,7 @@ ctfd:
 | ctfd.imagePullSecrets | list | `[]` | Image pull secrets (use this for private repos) |
 | ctfd.ingress.annotations | object | `{}` | Ingress annotations |
 | ctfd.ingress.className | string | `""` | Ingress class |
-| ctfd.ingress.enabled | bool | `false` | Enables ingress |
+| ctfd.ingress.enabled | bool | `true` | Enables ingress |
 | ctfd.initContainers | list | `[]` |  |
 | ctfd.livenessProbe | object | Check `values.yaml` | CTFd readiness probe |
 | ctfd.nameOverride | string | `""` | Chart name override |
@@ -206,24 +206,18 @@ ctfd:
 | ctfd.uploadprovider.s3.secret_access_key | string | `""` | AWS S3 bucket access key |
 | ctfd.volumeMounts | list | `[]` | CTFd volumeMounts |
 | ctfd.volumes | list | `[]` | CTFd volumes |
-| mariadb.architecture | string | `"standalone"` | MariaDB Architecture (`standalone`, `replication`) |
-| mariadb.auth.database | string | `"ctfd"` |  |
-| mariadb.auth.password | string | `"ctfd"` |  |
-| mariadb.auth.rootPassword | string | `"ctfd"` |  |
-| mariadb.auth.username | string | `"ctfd"` |  |
-| mariadb.enabled | bool | `true` | Deploys bitnami's mariadb (set to false if you want to use an external database) |
-| mariadb.external | object | ignored | External database connection details. Takes effect if `mariadb.enabled` is set to false |
-| mariadb.metrics.enabled | bool | `true` |  |
-| mariadb.primary.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
-| mariadb.primary.persistence.enabled | bool | `true` |  |
-| mariadb.primary.persistence.size | string | `"2Gi"` |  |
-| mariadb.primary.resourcesPreset | string | `"small"` | Check Bintami's documentation |
-| mariadb.secondary.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
-| mariadb.secondary.persistence.enabled | bool | `true` |  |
-| mariadb.secondary.persistence.size | string | `"2Gi"` |  |
-| mariadb.secondary.replicaCount | int | `1` |  |
-| mariadb.secondary.resourcesPreset | string | `"small"` | Check Bintami's documentation |
-| mariadb.volumePermissions.enabled | bool | `true` |  |
+| mariadb-galera.db.name | string | `"ctfd"` |  |
+| mariadb-galera.db.password | string | `"ctfd"` |  |
+| mariadb-galera.db.user | string | `"ctfd"` |  |
+| mariadb-galera.enabled | bool | `true` | Deploys bitnami's mariadb-galera (set to false if you want to use an external database) |
+| mariadb-galera.external | object | ignored | External database connection details. Takes effect if `mariadb.enabled` is set to false |
+| mariadb-galera.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
+| mariadb-galera.galera.mariabackup.password | string | `"ctfd"` |  |
+| mariadb-galera.metrics.enabled | bool | `true` |  |
+| mariadb-galera.persistence.enabled | bool | `true` |  |
+| mariadb-galera.persistence.size | string | `"2Gi"` |  |
+| mariadb-galera.resourcesPreset | string | `"large"` |  |
+| mariadb-galera.rootUser.password | string | `"ctfd"` |  |
 | redis.auth.enabled | bool | `false` |  |
 | redis.enabled | bool | `true` | Deploys bitnami's redis (set to false if you want to use an external cache) |
 | redis.external | object | ignored | External redis cache connection details. Takes effect if `redis.enabled` is set to false |
