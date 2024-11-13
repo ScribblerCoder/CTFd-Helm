@@ -20,7 +20,7 @@
                                                                      version: {{ .Values.ctfd.image.tag | default .Chart.AppVersion }}
 
 
-{{ if or (index .Values "mariadb-galera" "enabled") (.Values.redis.enabled) -}}
+{{ if or (index .Values "mariadb-galera" "enabled") (index .Values "redis-ha" "enabled") -}}
 ** Please be patient while MariaDB or Redis are being deployed **
 {{ end }}
 
