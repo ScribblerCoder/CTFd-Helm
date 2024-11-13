@@ -11,15 +11,15 @@ ctfd:
   imagePullSecrets: []
 
   # -- CTFd replica count (If autoscaling is enabled, this value is ignored)
-  replicaCount: 2
+  replicaCount: 3
   # custom scaling metrics should be considered like the Req/sec and # of sessions, etc.
   autoscaling:
     # -- Enables HPA autoscaling
     enabled: true
     # -- Autoscaling min replicas
-    minReplicas: 2
+    minReplicas: 3
     # -- Autoscaling max replicas
-    maxReplicas: 10
+    maxReplicas: 20
     # -- Autoscaling target CPU utilization percentage
     targetCPUUtilizationPercentage: 80
     # -- Autoscaling target memory utilization percentage
@@ -185,6 +185,7 @@ ctfd:
 mariadb-galera:
   # -- Deploys bitnami's mariadb-galera (set to false if you want to use an external database)
   enabled: true
+  replicaCount: 3
   db:
     user: ctfd
     password: ctfd
@@ -202,7 +203,7 @@ mariadb-galera:
   # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
   extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
   metrics:
-    enabled: true  # prometheus metrics exporter
+    enabled: false  # prometheus metrics exporter
   # -- External database connection details. Takes effect if `mariadb.enabled` is set to false
   # @default -- ignored
   external:
@@ -212,10 +213,13 @@ mariadb-galera:
     password: ""
     database: ""
 
-# Override the redis-ha subchart values
+## Redis-HA subchart replaces custom redis deployment when `redis-ha.enabled=true`
+# Ref: https://github.com/DandyDeveloper/charts/blob/master/charts/redis-ha/values.yaml
 redis-ha:
   # -- Enables the Redis HA subchart and disables the custom Redis single node deployment
-  enabled: true # set to false if you want to use an external redis
+  enabled: true
+  # -- Redis-HA replicas
+  replicas: 3
   ## Redis image
   image:
     # -- Redis repository
@@ -233,47 +237,79 @@ redis-ha:
   persistentVolume:
     # -- Configures persistence on Redis nodes
     enabled: false
-  # -- External redis cache connection details. Takes effect if `redis.enabled` is set to false
-  # @default -- ignored
-  external:
-    port: 6379
-    host: external-redis-host
-    username: ""
-    password: ""
-
-# Override the redis subchart values (I am considering the switch from redis to redis-ha)
-redis:
-  # -- Deploys bitnami's redis (set to false if you want to use an external cache)
-  enabled: true  # set to false if you want to use an external redis
-  # -- External redis cache connection details. Takes effect if `redis.enabled` is set to false
-  # @default -- ignored
-  external:
-    port: 6379
-    host: external-redis-host
-    username: ""
-    password: ""
-  volumePermissions:
-    enabled: true  # set to false if you want to manage the permissions yourself
-  sysctl:
+  ## Redis specific configuration options
+  redis:
+    # -- Redis convention for naming the cluster group: must match `^[\\w-\\.]+$` and can be templated
+    masterGroupName: ctfd
+    # -- Any valid redis config options in this section will be applied to each server (see `redis-ha` chart)
+    # @default -- See [values.yaml]
+    config:
+      # -- Will save the DB if both the given number of seconds and the given number of write operations against the DB occurred. `""`  is disabled
+      # @default -- `'""'`
+      save: '""'
+  ## Enables a HA Proxy for better LoadBalancing / Sentinel Master support. Automatically proxies to Redis master.
+  haproxy:
+    # -- Enabled HAProxy LoadBalancing/Proxy
     enabled: true
-  auth:
-    enabled: false
-  master:
-    count: 1  # higher values are experimental
-    # -- Check Bintami's documentation
-    resourcesPreset: micro
-    persistence:
-      enabled: false
-  replica:
-    autoscaling:
+    # -- HAProxy replicas
+    replicas: 3
+    metrics:
+      # -- HAProxy enable prometheus metric scraping
       enabled: true
-      targetCPU: "80"
-    persistence:
-      enabled: false
-    # -- Check Bintami's documentation
-    resourcesPreset: micro
-  metrics:
-    enabled: true  # prometheus metrics exporter
+    # -- Whether the haproxy pods should be forced to run on separate nodes.
+    hardAntiAffinity: true
+    # -- Additional affinities to add to the haproxy pods.
+    additionalAffinities: {}
+    # -- Assign custom [affinity] rules to the haproxy pods.
+    affinity: |
+
+    # -- [Tolerations] for use with node taints for haproxy pods.
+    tolerations: []
+    # -- HAProxy container-level security context
+    # @default -- See [values.yaml]
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+
+  # -- Configures redis-ha with AUTH
+  auth: false
+
+  # -- Whether the Redis server pods should be forced to run on separate nodes.
+  hardAntiAffinity: true
+
+  # -- Additional affinities to add to the Redis server pods.
+  additionalAffinities: {}
+
+  # -- Assign custom [affinity] rules to the Redis pods.
+  affinity: |
+
+  # -- [Tolerations] for use with node taints for Redis pods.
+  tolerations: []
+
+  # -- Assign custom [TopologySpreadConstraints] rules to the Redis pods.
+  ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  topologySpreadConstraints:
+    # -- Enable Redis HA topology spread constraints
+    enabled: false
+    # -- Max skew of pods tolerated
+    # @default -- `""` (defaults to `1`)
+    maxSkew: ""
+    # -- Topology key for spread
+    # @default -- `""` (defaults to `topology.kubernetes.io/zone`)
+    topologyKey: ""
+    # -- Enforcement policy, hard or soft
+    # @default -- `""` (defaults to `ScheduleAnyway`)
+    whenUnsatisfiable: ""
+  # -- Redis HA statefulset container-level security context
+  # @default -- See [values.yaml]
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+  # -- External redis cache connection details. Takes effect if `redis-ha.enabled` is set to false
+  # @default -- ignored
+  external:
+    port: 6379
+    host: external-redis-host
+    username: ""
+    password: ""
 
 # Override the seaweedfs subchart values
 seaweedfs:

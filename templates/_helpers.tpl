@@ -79,7 +79,7 @@ mysql+pymysql://{{ index .Values "mariadb-galera" "external" "username" }}:{{ in
 */}}
 {{- define "ctfd.REDIS_URL" -}}
 {{- if index .Values "redis-ha" "enabled" -}}
-redis://{{ .Release.Name }}-redis-ha:6379
+redis://{{ .Release.Name }}-redis-ha-haproxy:6379
 {{- else -}}
 redis://{{ index .Values "redis-ha" "external" "username" }}:{{ index .Values "redis-ha" "external" "password" }}@{{ index .Values "redis-ha" "external" "host" }}:{{ index .Values "redis-ha" "external" "port" }}
 {{- end -}}
