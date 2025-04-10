@@ -135,7 +135,27 @@ ctfd:
     successThreshold: 1
     failureThreshold: 5
 
-  initContainers: []
+  initContainers:
+    - name: install-theme
+      image: alpine/git
+      command:
+        - "/bin/sh"
+        - "-c"
+        - |
+          git clone https://github.com/CodeBreaker44/CTFd-PlaygroundsCTF-Theme /CTFd-PlaygroundsCTF-Theme
+      volumeMounts:
+        - name: theme
+          mountPath: /CTFd-PlaygroundsCTF-Theme
+
+  # -- CTFd volumes
+  volumes:
+    - name: theme
+      emptyDir: {}
+
+  # --  CTFd volumeMounts
+  volumeMounts:
+    - name: theme
+      mountPath: /opt/CTFd/CTFd/themes/CTFd-PlaygroundsCTF-Theme
 
   # -- Chart name override
   nameOverride: ""
@@ -159,12 +179,6 @@ ctfd:
 
   # -- CTFd pod security context
   podSecurityContext: {}
-
-  # -- CTFd volumes
-  volumes: []
-
-  # --  CTFd volumeMounts
-  volumeMounts: []
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -207,7 +221,6 @@ mariadb:
     # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
     extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
     # -- Check Bintami's documentation
-    resourcePreset: small
     persistence:
       enabled: true
       size: 2Gi
@@ -216,7 +229,6 @@ mariadb:
     # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
     extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
     # -- Check Bintami's documentation
-    resourcePreset: small
     replicaCount: 1
     persistence:
       enabled: true
