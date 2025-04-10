@@ -34,7 +34,7 @@ jobs:
       - name: add helm repos
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo add seaweedfs https://seaweedfs.github.io/seaweedfs/helm
+          helm repo add seaweedfs helm repo add minio https://charts.min.io
           helm repo update
 
       - name: Run chart-releaser

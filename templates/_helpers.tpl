@@ -84,3 +84,13 @@ redis://{{ .Release.Name }}-redis-master:6379
 redis://{{ .Values.redis.external.username }}:{{ .Values.redis.external.password }}@{{ .Values.redis.external.host }}:{{ .Values.redis.external.port }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+   Generate CTFd MINIO_URL
+*/}}
+{{- define "ctfd.MINIO_URL" -}}
+{{- if .Values.minio.enabled -}}
+http://{{ .Release.Name }}-minio:9000
+{{- else -}}
+{{- end -}}
+{{- end -}}

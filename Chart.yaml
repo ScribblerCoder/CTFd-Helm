@@ -17,7 +17,8 @@ dependencies:
     version: 14.0.12
     repository: https://charts.bitnami.com/bitnami
     condition: mariadb-galera.enabled
-  - name: seaweedfs
-    version: 4.0.0
-    repository: https://seaweedfs.github.io/seaweedfs/helm
-    condition: seaweedfs.enabled
+  - name: minio
+    alias: minio
+    version: 5.4.0
+    repository: https://charts.min.io/
+    condition: minio.enabled

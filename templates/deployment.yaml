@@ -19,7 +19,6 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       {{- with .Values.ctfd.podAnnotations }}
         {{- toYaml . | nindent 8 }}
@@ -50,8 +49,20 @@ spec:
               name: {{ include "ctfd.fullname" . }}
           - secretRef:
               name: {{ include "ctfd.fullname" . }}-secret-key
-          - configMapRef:
-              name: {{ include "ctfd.fullname" . }}
+          env: 
+            {{- .Values.ctfd.env | toYaml | nindent 12 }}
+            {{- if .Values.minio.enabled }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-minio
+                  key: rootUser
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef: 
+                  name: {{ .Release.Name }}-minio
+                  key: rootPassword
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.ctfd.service.port }}
