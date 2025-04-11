@@ -17,7 +17,7 @@ helm install ctfd ctfd/ctfd -f values.yaml
 
 ## Install from source
 
-Build helm dependencies (MariaDB/Redis/SeaweedFS) before installing the chart.
+Build helm dependencies (MariaDB/Redis/Minio) before installing the chart.
 
 ```bash
 helm dependency update
@@ -38,12 +38,12 @@ helm uninstall release-name --namespace ctfd
 
 - CTFd `SECRET_KEY` is automatically generated during installation/upgrade. You can find it in the secret `release-name-ctfd-secret-key`. This secret is injected as environment variable in all CTFd pods.
 - Redis in this chart uses single master with multiple workers.
-- This chart deploys SeaweedFS S3 as an uploadprovider. You can use AWS S3 or any other external S3 compatible storage as an upload provider. Just set `seaweedfs.enabled` to `false` and configure the external S3 provider in `ctfd.uploadprovider.s3`.
+- This chart deploys Minio S3 bucket as an uploadprovider. You can use AWS S3 or any other external S3 compatible storage as an upload provider. Just set `minio.enabled` to `false` and configure the external S3 provider in `ctfd.uploadprovider.s3`.
 - This chart intentionally refrains from supporting `filesystem` uploadprovider. This needs `ReadWriteMany` PVCs which are expensive in cloud providers and not recommended for production use. S3 is fast and cheap.
 
 ## Values examples
 
-### Deploy Bitnami MariaDB/Redis and SeaweedFS S3
+### Deploy Bitnami MariaDB/Redis and Minio
 ```yaml
 ctfd:
   image:
@@ -52,17 +52,17 @@ ctfd:
     enabled: true
     minReplicas: 2
     maxReplicas: 10
-mariadb:
+mariadb-galera:
   enabled: true
-  architecture: standalone
-  primary:
+  persistence:
+    enabled: true
     size: 2Gi
 redis:
   enabled: true
-seaweedfs:
+minio:
   enabled: true
-  s3:
-    enabled: true
+  persistence:
+    size: 10Gi
 ```
 
 ### Configure your own external DB/Redis/S3
@@ -80,7 +80,7 @@ ctfd:
       endpoint_url: ""
       secret_access_key: ""
       access_key_id: ""
-mariadb:
+mariadb-galera:
   enabled: false
   external:
     port: 3306
@@ -95,7 +95,7 @@ redis:
     host: ""
     username: ""
     password: ""
-seaweedfs:
+minio:
   enabled: false
 ```
 
@@ -107,32 +107,25 @@ ctfd:
   replicas: 2
   autoscaling:
     enabled: false
-  resources:
-    limits:
-      cpu: "2"
-      memory: 2Gi
-    requests:
-      cpu: "1"
-      memory: 1Gi
 ```
 
 ## Features
 
 - [x] HA and horizontal autoscaling with CPU and memory metrics
 - [x] Configurable CPU/memory requests and limits
-- [x] Deploys bitnami Redis, bitnami MariaDB and SeaweedFS S3 as Helm dependencies
+- [x] Deploys bitnami Redis, bitnami MariaDB-Galera and ~~SeaweedFS S3~~ (REPLACED WITH MINIO) as Helm dependencies
 - [X] Option to use AWS S3 or any other external S3 compatible storage as an upload provider
 - [x] Option to use external Redis and MariaDB (e.g., AWS RDS, ElastiCache)
 - [x] Customizable CTFd configuration
-- [x] Adjustable configurations for Redis and MariaDB
-- [x] Integration with external storage as upload provider (AWS S3 or SeaweedFS or any S3 compatible storage)
+- [x] Adjustable configurations for Redis and MariaDB-Galera
+- [x] Integration with external storage as upload provider (AWS S3 or Minio or any S3 compatible storage)
 - [x] Liveness and Readiness checks
 - [x] Affinity/Toleration/nodeSelector rules
 - [x] Automatically rolls out config updates to CTFd pods (Using checksum annotation)
 - [ ] Deploys self-hosted mail server for CTFd email notifications as a helm dependency
 - [ ] Automated backups (CTFd export. This could be done with batch/v1 CronJob)
 - [ ] Deploys postgres db as a helm dependency (ctfd.io doesn't actively support it so this is a low priority)
-- [ ] Support for custom CTFd themes/plugin (using initContainers?)
+- [ ] Support for custom CTFd themes/plugin (using initContainers? this is WIP)
 
 ## To Do
 
@@ -155,7 +148,7 @@ ctfd:
 |------------|------|---------|
 | https://charts.bitnami.com/bitnami | mariadb-galera | 14.0.12 |
 | https://charts.bitnami.com/bitnami | redis | 20.0.5 |
-| https://seaweedfs.github.io/seaweedfs/helm | seaweedfs | 4.0.0 |
+| https://charts.min.io/ | minio(minio) | 5.4.0 |
 
 ## Values
 
@@ -172,7 +165,8 @@ ctfd:
 | ctfd.image.repository | string | `"ghcr.io/ctfd/ctfd"` | repository link to the CTFd docker image |
 | ctfd.image.tag | string | `latest` | CTFd image tag (check https://github.com/CTFd/CTFd/pkgs/container/ctfd) |
 | ctfd.imagePullSecrets | list | `[]` | Image pull secrets (use this for private repos) |
-| ctfd.ingress.annotations | object | `{}` | Ingress annotations |
+| ctfd.ingress.annotations | object | `{"nginx.ingress.kubernetes.io/proxy-body-size":"2G"}` | Ingress annotations |
+| ctfd.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"2G"` | Max body size for uploads (Check CTFd github repository's nginx configurations) |
 | ctfd.ingress.className | string | `""` | Ingress class |
 | ctfd.ingress.enabled | bool | `true` | Enables ingress |
 | ctfd.initContainers | list | `[]` |  |
@@ -206,18 +200,29 @@ ctfd:
 | ctfd.uploadprovider.s3.secret_access_key | string | `""` | AWS S3 bucket access key |
 | ctfd.volumeMounts | list | `[]` | CTFd volumeMounts |
 | ctfd.volumes | list | `[]` | CTFd volumes |
-| mariadb-galera.db.name | string | `"ctfd"` |  |
-| mariadb-galera.db.password | string | `"ctfd"` |  |
-| mariadb-galera.db.user | string | `"ctfd"` |  |
+| extraObjects | list | `[]` | Made for deploying custom manifests with this helm chart |
+| mariadb-galera.db.name | string | `"ctfd"` | ctfd database name |
+| mariadb-galera.db.password | string | `"ctfd"` | ctfd database password |
+| mariadb-galera.db.user | string | `"ctfd"` | ctfd database user |
 | mariadb-galera.enabled | bool | `true` | Deploys bitnami's mariadb-galera (set to false if you want to use an external database) |
 | mariadb-galera.external | object | ignored | External database connection details. Takes effect if `mariadb.enabled` is set to false |
 | mariadb-galera.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
-| mariadb-galera.galera.mariabackup.password | string | `"ctfd"` |  |
-| mariadb-galera.metrics.enabled | bool | `true` |  |
+| mariadb-galera.galera | object | `{"mariabackup":{"password":"ctfd"}}` | backup user (This is required by the subchart to do helm upgrades) |
+| mariadb-galera.galera.mariabackup.password | string | `"ctfd"` | backup user (This is required by the subchart to do helm upgrades) |
+| mariadb-galera.metrics.enabled | bool | `false` |  |
 | mariadb-galera.persistence.enabled | bool | `true` |  |
-| mariadb-galera.persistence.size | string | `"2Gi"` |  |
-| mariadb-galera.resourcesPreset | string | `"large"` |  |
-| mariadb-galera.rootUser.password | string | `"ctfd"` |  |
+| mariadb-galera.persistence.size | string | `"2Gi"` | PVC size |
+| mariadb-galera.replicaCount | int | `3` | Number of primary nodes replicas |
+| mariadb-galera.resourcesPreset | string | `"large"` | request and limits preset (check bitnami's mariadb-galera chart for details) |
+| mariadb-galera.rootUser.password | string | `"ctfd"` | root user |
+| minio.buckets[0] | object | `{"name":"ctfd-bucket","policy":"download","purge":false}` | Default bucket to be used by CTFd `download` policy means this bucket is readonly for anonymous access (competitors) |
+| minio.drivesPerNode | int | `1` | Minio number of drives per replica/node |
+| minio.enabled | bool | `true` | Deploys Minio (set to false if you want to use an external S3 bucket) |
+| minio.ingress | object | `{"annotations":{"nginx.ingress.kubernetes.io/proxy-body-size":"0"},"enabled":true,"hosts":["minio.example.com"]}` | Ingress configurations of minio (Used by both CTFd and competitiors) |
+| minio.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"0"` | Max Body size `0 -> unlimited` (if you are using another ingress controller then look for the equivalent annotation)  |
+| minio.persistence | object | `{"size":"10Gi"}` | Minio PVC size (change according to your needs) |
+| minio.replicas | int | `3` | Minio number of replicas |
+| minio.resources.requests.memory | string | `"2Gi"` |  |
 | redis.auth.enabled | bool | `false` |  |
 | redis.enabled | bool | `true` | Deploys bitnami's redis (set to false if you want to use an external cache) |
 | redis.external | object | ignored | External redis cache connection details. Takes effect if `redis.enabled` is set to false |
@@ -231,18 +236,5 @@ ctfd:
 | redis.replica.resourcesPreset | string | `"micro"` | Check Bintami's documentation |
 | redis.sysctl.enabled | bool | `true` |  |
 | redis.volumePermissions.enabled | bool | `true` |  |
-| seaweedfs.enabled | bool | `true` | Deploys seaweedfs (set to false if you want to use an bucket) |
-| seaweedfs.filer.data.size | string | `"5Gi"` | seaweedfs-filer storage size |
-| seaweedfs.filer.data.type | string | `"persistentVolumeClaim"` | seaweedfs-filer data storage type |
-| seaweedfs.filer.enablePVC | bool | `true` | seaweedfs-filer enable PVC for data persistence |
-| seaweedfs.filer.replicas | int | `1` | seaweedfs-filer replicas |
-| seaweedfs.filer.s3.createBuckets | list | `[{"name":"ctfd-bucket"}]` | seaweedfs-s3 create bucket upon deploying |
-| seaweedfs.filer.s3.enableAuth | bool | `false` | seaweedfs-s3 enable authentication (no need since seaweed is private to the cluster) |
-| seaweedfs.filer.s3.enabled | bool | `true` | seaweedfs-s3 enable. This enables S3 API (Should be left to `true`) |
-| seaweedfs.filer.storage | string | `"5Gi"` | seaweedfs-filer PVC storage size |
-| seaweedfs.master.data.size | string | `"5Gi"` | seaweedfs storage size |
-| seaweedfs.master.data.type | string | `"persistentVolumeClaim"` | seaweedfs data storage type |
-| seaweedfs.master.replicas | int | `1` | seaweedfs-master replicas |
-| seaweedfs.volume.replicas | int | `1` | seaweedfs-volume replicas |
 
 Autogenerated from chart metadata using [helm-docs](https://github.com/norwoodj/helm-docs)
