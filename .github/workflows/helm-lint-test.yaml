@@ -47,4 +47,5 @@ jobs:
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo add minio https://charts.min.io 
           helm repo update
+          helm dep up
           helm template ctfd . -f values.yaml | kubectl create --dry-run=server -f -
