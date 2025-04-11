@@ -5,7 +5,8 @@ icon: https://ctfd.io/static/img/ctfd.svg
 
 type: application
 
-version: 0.2.0
+# Dev note: trigger a helm chart release by bumping the version
+version: 0.3.0
 
 # Redis, MySQL/MariaDB and Seaweedfs
 dependencies:
@@ -17,7 +18,8 @@ dependencies:
     version: 14.0.12
     repository: https://charts.bitnami.com/bitnami
     condition: mariadb-galera.enabled
-  - name: seaweedfs
-    version: 4.0.0
-    repository: https://seaweedfs.github.io/seaweedfs/helm
-    condition: seaweedfs.enabled
+  - name: minio
+    alias: minio
+    version: 5.4.0
+    repository: https://charts.min.io/
+    condition: minio.enabled

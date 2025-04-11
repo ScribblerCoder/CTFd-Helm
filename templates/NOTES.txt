@@ -21,7 +21,7 @@
 
 
 {{ if or (index .Values "mariadb-galera" "enabled") (.Values.redis.enabled) -}}
-** Please be patient while MariaDB or Redis are being deployed **
+** Please be patient while MariaDB and/or Redis are being deployed **
 {{ end }}
 
 Get the list of pods by executing:

@@ -56,7 +56,7 @@ ctfd:
   uploadprovider:
     s3:
       # -- AWS S3 bucket name
-      bucket: ""  # external bucket (you should disable SeaweedFS. See below)
+      bucket: ""  # external bucket (you should disable Minio. See below)
       # -- AWS S3 bucket region
       endpoint_url: ""
       # -- AWS S3 bucket access key
@@ -70,7 +70,9 @@ ctfd:
     # -- Ingress class
     className: ""
     # -- Ingress annotations
-    annotations: {}
+    annotations:
+      # -- Max body size for uploads (Check CTFd github repository's nginx configurations)
+      nginx.ingress.kubernetes.io/proxy-body-size: "2G"
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
     # @ignored
@@ -121,7 +123,7 @@ ctfd:
     periodSeconds: 10
     timeoutSeconds: 5
     successThreshold: 1
-    failureThreshold: 5
+    failureThreshold: 10
 
   # -- CTFd readiness probe
   # @default -- Check `values.yaml`
@@ -133,7 +135,7 @@ ctfd:
     periodSeconds: 10
     timeoutSeconds: 5
     successThreshold: 1
-    failureThreshold: 5
+    failureThreshold: 10
 
   initContainers: []
 
@@ -185,24 +187,34 @@ ctfd:
 mariadb-galera:
   # -- Deploys bitnami's mariadb-galera (set to false if you want to use an external database)
   enabled: true
+  # -- Number of primary nodes replicas
+  replicaCount: 3
   db:
+    # -- ctfd database user
     user: ctfd
+    # -- ctfd database password
     password: ctfd
+    # -- ctfd database name
     name: ctfd
+  # -- backup user (This is required by the subchart to do helm upgrades)
   galera:
     mariabackup:
+      # -- backup user (This is required by the subchart to do helm upgrades)
       password: ctfd
   rootUser:
+    # -- root user
     password: ctfd
+  # -- request and limits preset (check bitnami's mariadb-galera chart for details)
   resourcesPreset: large
   persistence:
     enabled: true
+    # -- PVC size
     size: 2Gi
   # -- MariaDB primary entrypoint extra flags
   # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
   extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
   metrics:
-    enabled: true  # prometheus metrics exporter
+    enabled: false  # prometheus metrics exporter
   # -- External database connection details. Takes effect if `mariadb.enabled` is set to false
   # @default -- ignored
   external:
@@ -246,39 +258,33 @@ redis:
   metrics:
     enabled: true  # prometheus metrics exporter
 
-# Override the seaweedfs subchart values
-seaweedfs:
-  # -- Deploys seaweedfs (set to false if you want to use an bucket)
-  enabled: true  # set to false if you want to use an external bucket
-  master:
-    # -- seaweedfs-master replicas
-    replicas: 1
-    data:
-      # -- seaweedfs data storage type
-      type: "persistentVolumeClaim"
-      # -- seaweedfs storage size
-      size: 5Gi
+# Override the minio subchart values
+minio:
+  # -- Deploys Minio (set to false if you want to use an external S3 bucket)
+  enabled: true
+  buckets:
+      # -- Default bucket to be used by CTFd `download` policy means this bucket is readonly for anonymous access (competitors)
+    - name: ctfd-bucket
+      policy: download
+      purge: false
+  # -- Ingress configurations of minio (Used by both CTFd and competitiors)
+  ingress:
+    enabled: true
+    hosts:
+      - minio.example.com
+    annotations:
+      # -- Max Body size `0 -> unlimited` (if you are using another ingress controller then look for the equivalent annotation) 
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  # -- Minio number of replicas
+  replicas: 3
+  # -- Minio number of drives per replica/node
+  drivesPerNode: 1
+  resources:
+    requests:
+      memory: 2Gi
+  # -- Minio PVC size (change according to your needs)
+  persistence:
+    size: 10Gi
 
-  volume:
-    # -- seaweedfs-volume replicas
-    replicas: 1
-  filer:
-    # -- seaweedfs-filer replicas
-    replicas: 1
-    # -- seaweedfs-filer enable PVC for data persistence
-    enablePVC: true
-    # -- seaweedfs-filer PVC storage size
-    storage: 5Gi
-    data:
-      # -- seaweedfs-filer data storage type
-      type: "persistentVolumeClaim"
-      # -- seaweedfs-filer storage size
-      size: 5Gi
-    s3:
-      # -- seaweedfs-s3 enable. This enables S3 API (Should be left to `true`)
-      enabled: true
-      # -- seaweedfs-s3 enable authentication (no need since seaweed is private to the cluster)
-      enableAuth: false
-      # -- seaweedfs-s3 create bucket upon deploying
-      createBuckets:
-        - name: ctfd-bucket
+# -- Made for deploying custom manifests with this helm chart
+extraObjects: []
