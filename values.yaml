@@ -260,21 +260,31 @@ redis:
 
 # Override the minio subchart values
 minio:
+  # -- Deploys Minio (set to false if you want to use an external S3 bucket)
   enabled: true
   buckets:
+      # -- Default bucket to be used by CTFd `download` policy means this bucket is readonly for anonymous access (competitors)
     - name: ctfd-bucket
-      policy: readonly
+      policy: download
       purge: false
+  # -- Ingress configurations of minio (Used by both CTFd and competitiors)
   ingress:
     enabled: true
     hosts:
-      - minio.example.local
+      - minio.example.com
+    annotations:
+      # -- Max Body size `0 -> unlimited` (if you are using another ingress controller then look for the equivalent annotation) 
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  # -- Minio number of replicas
   replicas: 3
-  drivesPerNode: 4
+  # -- Minio number of drives per replica/node
+  drivesPerNode: 1
   resources:
     requests:
-      memory: 4Gi
+      memory: 2Gi
+  # -- Minio PVC size (change according to your needs)
   persistence:
     size: 10Gi
 
+# -- Made for deploying custom manifests with this helm chart
 extraObjects: []

@@ -47,8 +47,6 @@ spec:
           envFrom:
           - secretRef:
               name: {{ include "ctfd.fullname" . }}
-          - secretRef:
-              name: {{ include "ctfd.fullname" . }}-secret-key
           env: 
             {{- .Values.ctfd.env | toYaml | nindent 12 }}
             {{- if .Values.minio.enabled }}

@@ -90,7 +90,7 @@ redis://{{ .Values.redis.external.username }}:{{ .Values.redis.external.password
 */}}
 {{- define "ctfd.MINIO_URL" -}}
 {{- if .Values.minio.enabled -}}
-http://{{ .Release.Name }}-minio:9000
+http://{{ (index .Values.minio.ingress.hosts 0) }}
 {{- else -}}
 {{- end -}}
 {{- end -}}
