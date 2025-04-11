@@ -2,6 +2,31 @@ apiVersion: v1
 entries:
   ctfd:
   - apiVersion: v2
+    created: "2025-04-11T17:28:57.226311974+03:00"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.0.5
+    - condition: mariadb-galera.enabled
+      name: mariadb-galera
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.0.12
+    - alias: minio
+      condition: minio.enabled
+      name: minio
+      repository: https://charts.min.io
+      version: 5.4.0
+    description: A Helm chart to deploy CTFd on Kubernetes. HA/Autoscaling + MariaDB
+      + Redis + Minio
+    digest: 0ca83e496a39bea3a461691ec17c70f446e7bc0933b946889817044b0d0d9aae
+    icon: https://ctfd.io/static/img/ctfd.svg
+    name: ctfd
+    type: application
+    urls:
+    - ctfd-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     created: "2024-10-09T22:57:02.095022667+03:00"
     dependencies:
     - condition: redis.enabled
@@ -50,4 +75,4 @@ entries:
     urls:
     - ctfd-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-09T22:57:02.095027597+03:00"
+generated: "2025-04-11T17:28:57.226319951+03:00"
