@@ -5,6 +5,7 @@ icon: https://ctfd.io/static/img/ctfd.svg
 
 type: application
 
+# Dev note: trigger a helm chart release by bumping the version
 version: 0.2.0
 
 # Redis, MySQL/MariaDB and Seaweedfs
@@ -18,6 +19,6 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: mariadb-galera.enabled
   - name: seaweedfs
-    version: 4.0.0
+    version: 4.0.380
     repository: https://seaweedfs.github.io/seaweedfs/helm
     condition: seaweedfs.enabled
