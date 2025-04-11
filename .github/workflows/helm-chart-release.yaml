@@ -43,5 +43,5 @@ jobs:
           wget -O /tmp/chart-releaser_1.6.1_linux_amd64.tar.gz https://github.com/helm/chart-releaser/releases/download/v1.6.1/chart-releaser_1.6.1_linux_amd64.tar.gz
           tar -zxvf /tmp/chart-releaser_1.6.1_linux_amd64.tar.gz -C /tmp
           /tmp/cr package .
-          /tmp/cr upload --owner ${{ github.repository_owner }} --git-repo ${{ github.repository }} --packages-with-index --token ${{ secrets.GITHUB_TOKEN }} --push --skip-existing
-          /tmp/cr index --owner ${{ github.repository_owner }}  --git-repo ${{ github.repository }}  --packages-with-index --index-path . --token ${{ secrets.GITHUB_TOKEN }} --push
+          /tmp/cr upload --owner ${{ github.repository_owner }} --git-repo ${{ github.repository }} --packages-with-index --token ${{ secrets.HELM_RELEASE_TOKEN }} --push --skip-existing
+          /tmp/cr index --owner ${{ github.repository_owner }}  --git-repo ${{ github.repository }}  --packages-with-index --index-path . --token ${{ secrets.HELM_RELEASE_TOKEN }} --push
