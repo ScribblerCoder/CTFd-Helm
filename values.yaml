@@ -70,7 +70,9 @@ ctfd:
     # -- Ingress class
     className: ""
     # -- Ingress annotations
-    annotations: {}
+    annotations:
+      # -- Max body size for uploads (Check CTFd github repository's nginx configurations)
+      nginx.ingress.kubernetes.io/proxy-body-size: "2G"
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
     # @ignored
@@ -185,24 +187,34 @@ ctfd:
 mariadb-galera:
   # -- Deploys bitnami's mariadb-galera (set to false if you want to use an external database)
   enabled: true
+  # -- Number of primary nodes replicas
+  replicaCount: 3
   db:
+    # -- ctfd database user
     user: ctfd
+    # -- ctfd database password
     password: ctfd
+    # -- ctfd database name
     name: ctfd
+  # -- backup user (This is required by the subchart to do helm upgrades)
   galera:
     mariabackup:
+      # -- backup user (This is required by the subchart to do helm upgrades)
       password: ctfd
   rootUser:
+    # -- root user
     password: ctfd
+  # -- request and limits preset (check bitnami's mariadb-galera chart for details)
   resourcesPreset: large
   persistence:
     enabled: true
+    # -- PVC size
     size: 2Gi
   # -- MariaDB primary entrypoint extra flags
   # @default -- Check `values.yaml`. Used by official CTFd `docker-compose.yml`
   extraFlags: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --log-warnings=0"
   metrics:
-    enabled: true  # prometheus metrics exporter
+    enabled: false  # prometheus metrics exporter
   # -- External database connection details. Takes effect if `mariadb.enabled` is set to false
   # @default -- ignored
   external:
