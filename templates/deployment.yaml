@@ -49,6 +49,18 @@ spec:
               name: {{ include "ctfd.fullname" . }}
           env: 
             {{- .Values.ctfd.env | toYaml | nindent 12 }}
+            {{- if and (not .Values.minio.enabled) .Values.ctfd.uploadprovider.s3.secretRef.name }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.ctfd.uploadprovider.s3.secretRef.name }}
+                  key: {{ .Values.ctfd.uploadprovider.s3.secretRef.idKey }}
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef: 
+                  name: {{ .Values.ctfd.uploadprovider.s3.secretRef.name }}
+                  key: {{ .Values.ctfd.uploadprovider.s3.secretRef.secretKey }}
+            {{- end }}
             {{- if .Values.minio.enabled }}
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
