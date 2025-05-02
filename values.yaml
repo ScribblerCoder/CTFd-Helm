@@ -224,6 +224,9 @@ mariadb-galera:
   external:
     port: 3306
     host: external-mariadb-host
+    secretRef:
+      name: null
+      databaseUrlKey: DATABASE_URL
     username: ""
     password: ""
     database: ""

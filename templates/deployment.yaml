@@ -73,6 +73,13 @@ spec:
                   name: {{ .Release.Name }}-minio
                   key: rootPassword
             {{- end }}
+            {{- if (index .Values "mariadb-galera").external.secretRef.name }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ (index .Values "mariadb-galera").external.secretRef.name }}
+                  key: {{ (index .Values "mariadb-galera").external.secretRef.databaseUrlKey }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.ctfd.service.port }}
