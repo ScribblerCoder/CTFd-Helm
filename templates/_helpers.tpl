@@ -73,6 +73,7 @@ mysql+pymysql://{{ index .Values "mariadb-galera" "external" "username" }}:{{ in
 {{- end -}}
 
 
+
 {{/*
    Generate CTFd REDIS_URL (internal bitnami redis or external self managed redis)
 */}}
