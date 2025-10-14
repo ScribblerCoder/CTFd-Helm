@@ -8,7 +8,7 @@ type: application
 # Dev note: trigger a helm chart release by bumping the version
 version: 0.3.0
 
-# Redis, MySQL/MariaDB and Seaweedfs
+# Redis, MySQL/MariaDB and MinIO
 dependencies:
   - name: redis
     version: 20.0.5
