@@ -55,6 +55,7 @@ ctfd:
 
   uploadprovider:
     s3:
+      # -- External Secrets S3 Credentials
       secretRef:
         name: null
         secretKey: AWS_SECRET_ACCESS_KEY
@@ -224,6 +225,7 @@ mariadb-galera:
   external:
     port: 3306
     host: external-mariadb-host
+    # -- External Secrets DB Credentials
     secretRef:
       name: null
       databaseUrlKey: DATABASE_URL
