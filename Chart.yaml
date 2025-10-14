@@ -6,7 +6,7 @@ icon: https://ctfd.io/static/img/ctfd.svg
 type: application
 
 # Dev note: trigger a helm chart release by bumping the version
-version: 0.3.0
+version: 0.3.1
 
 # Redis, MySQL/MariaDB and Seaweedfs
 dependencies:

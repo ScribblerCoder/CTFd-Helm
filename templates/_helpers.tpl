@@ -73,7 +73,6 @@ mysql+pymysql://{{ index .Values "mariadb-galera" "external" "username" }}:{{ in
 {{- end -}}
 
 
-
 {{/*
    Generate CTFd REDIS_URL (internal bitnami redis or external self managed redis)
 */}}
@@ -81,7 +80,7 @@ mysql+pymysql://{{ index .Values "mariadb-galera" "external" "username" }}:{{ in
 {{- if .Values.redis.enabled -}}
 redis://{{ .Release.Name }}-redis-master:6379
 {{- else -}}
-redis://{{ .Values.redis.external.username }}:{{ .Values.redis.external.password }}@{{ .Values.redis.external.host }}:{{ .Values.redis.external.port }}
+{{- printf "%s://%s:%s@%s:%v/%s" (.Values.redis.external.protocol | default "redis") .Values.redis.external.username .Values.redis.external.password .Values.redis.external.host .Values.redis.external.port (.Values.redis.external.database | default 0) -}}
 {{- end -}}
 {{- end -}}
 
