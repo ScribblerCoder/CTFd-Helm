@@ -56,10 +56,10 @@ ctfd:
   uploadprovider:
     s3:
       # -- External Secrets S3 Credentials
-      secretRef:
-        name: null
-        secretKey: AWS_SECRET_ACCESS_KEY
-        idKey: AWS_ACCESS_KEY_ID
+      secretRef: {}
+        # name: s3-secret-name
+        # secretKey: AWS_SECRET_ACCESS_KEY
+        # idKey: AWS_ACCESS_KEY_ID
       # -- AWS S3 bucket name
       bucket: ""  # external bucket (you should disable Minio. See below)
       # -- AWS S3 bucket region
@@ -226,9 +226,9 @@ mariadb-galera:
     port: 3306
     host: external-mariadb-host
     # -- External Secrets DB Credentials
-    secretRef:
-      name: null
-      databaseUrlKey: DATABASE_URL
+    secretRef: {}
+      # name: db-secret-name
+      # databaseUrlKey: DATABASE_URL
     username: ""
     password: ""
     database: ""
