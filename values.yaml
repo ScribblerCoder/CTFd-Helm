@@ -195,7 +195,6 @@ mariadb-galera:
   image:
     registry: docker.io
     repository: bitnamilegacy/mariadb-galera
-    tag: 11.4.4-debian-12-r0
   # -- Number of primary nodes replicas
   replicaCount: 3
   db:
@@ -242,9 +241,8 @@ redis:
   # -- Deploys bitnami's redis (set to false if you want to use an external cache)
   enabled: true  # set to false if you want to use an external redis
   image:
-    repository: docker.io
-    image: bitnamilegacy/redis
-    tag: 7.4.0-debian-12-r2
+    registry: docker.io
+    repository: bitnamilegacy/redis
   # -- External redis cache connection details. Takes effect if `redis.enabled` is set to false
   # @default -- ignored
   external:
@@ -254,8 +252,14 @@ redis:
     password: ""
   volumePermissions:
     enabled: true  # set to false if you want to manage the permissions yourself
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/os-shell
   sysctl:
     enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/os-shell
   auth:
     enabled: false
   master:
@@ -274,6 +278,13 @@ redis:
     resourcesPreset: micro
   metrics:
     enabled: true  # prometheus metrics exporter
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/redis-exporter
+  kubectl:
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/kubectl
 
 # Override the minio subchart values
 minio:
