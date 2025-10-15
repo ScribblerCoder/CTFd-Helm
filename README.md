@@ -197,7 +197,7 @@ ctfd:
 | ctfd.uploadprovider.s3.access_key_id | string | `""` | AWS S3 bucket secret key id |
 | ctfd.uploadprovider.s3.bucket | string | `""` | AWS S3 bucket name |
 | ctfd.uploadprovider.s3.endpoint_url | string | `""` | AWS S3 bucket region |
-| ctfd.uploadprovider.s3.secretRef | object | `{"idKey":"AWS_ACCESS_KEY_ID","name":null,"secretKey":"AWS_SECRET_ACCESS_KEY"}` | External Secrets S3 Credentials |
+| ctfd.uploadprovider.s3.secretRef | object | `{}` | External Secrets S3 Credentials |
 | ctfd.uploadprovider.s3.secret_access_key | string | `""` | AWS S3 bucket access key |
 | ctfd.volumeMounts | list | `[]` | CTFd volumeMounts |
 | ctfd.volumes | list | `[]` | CTFd volumes |
@@ -207,7 +207,7 @@ ctfd:
 | mariadb-galera.db.user | string | `"ctfd"` | ctfd database user |
 | mariadb-galera.enabled | bool | `true` | Deploys bitnami's mariadb-galera (set to false if you want to use an external database) |
 | mariadb-galera.external | object | ignored | External database connection details. Takes effect if `mariadb.enabled` is set to false |
-| mariadb-galera.external.secretRef | object | `{"databaseUrlKey":"DATABASE_URL","name":null}` | External Secrets DB Credentials |
+| mariadb-galera.external.secretRef | object | `{}` | External Secrets DB Credentials |
 | mariadb-galera.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
 | mariadb-galera.galera | object | `{"mariabackup":{"password":"ctfd"}}` | backup user (This is required by the subchart to do helm upgrades) |
 | mariadb-galera.galera.mariabackup.password | string | `"ctfd"` | backup user (This is required by the subchart to do helm upgrades) |
