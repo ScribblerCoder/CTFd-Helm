@@ -192,6 +192,10 @@ ctfd:
 mariadb-galera:
   # -- Deploys bitnami's mariadb-galera (set to false if you want to use an external database)
   enabled: true
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/mariadb-galera
+    tag: 11.4.4-debian-12-r0
   # -- Number of primary nodes replicas
   replicaCount: 3
   db:
@@ -237,6 +241,10 @@ mariadb-galera:
 redis:
   # -- Deploys bitnami's redis (set to false if you want to use an external cache)
   enabled: true  # set to false if you want to use an external redis
+  image:
+    repository: docker.io
+    image: bitnamilegacy/redis
+    tag: 7.4.0-debian-12-r2
   # -- External redis cache connection details. Takes effect if `redis.enabled` is set to false
   # @default -- ignored
   external:

@@ -211,6 +211,9 @@ ctfd:
 | mariadb-galera.extraFlags | string | Check `values.yaml`. Used by official CTFd `docker-compose.yml` | MariaDB primary entrypoint extra flags |
 | mariadb-galera.galera | object | `{"mariabackup":{"password":"ctfd"}}` | backup user (This is required by the subchart to do helm upgrades) |
 | mariadb-galera.galera.mariabackup.password | string | `"ctfd"` | backup user (This is required by the subchart to do helm upgrades) |
+| mariadb-galera.image.registry | string | `"docker.io"` |  |
+| mariadb-galera.image.repository | string | `"bitnamilegacy/mariadb-galera"` |  |
+| mariadb-galera.image.tag | string | `"11.4.4-debian-12-r0"` |  |
 | mariadb-galera.metrics.enabled | bool | `false` |  |
 | mariadb-galera.persistence.enabled | bool | `true` |  |
 | mariadb-galera.persistence.size | string | `"2Gi"` | PVC size |
@@ -228,6 +231,9 @@ ctfd:
 | redis.auth.enabled | bool | `false` |  |
 | redis.enabled | bool | `true` | Deploys bitnami's redis (set to false if you want to use an external cache) |
 | redis.external | object | ignored | External redis cache connection details. Takes effect if `redis.enabled` is set to false |
+| redis.image.image | string | `"bitnamilegacy/redis"` |  |
+| redis.image.repository | string | `"docker.io"` |  |
+| redis.image.tag | string | `"7.4.0-debian-12-r2"` |  |
 | redis.master.count | int | `1` |  |
 | redis.master.persistence.enabled | bool | `false` |  |
 | redis.master.resourcesPreset | string | `"micro"` | Check Bintami's documentation |
