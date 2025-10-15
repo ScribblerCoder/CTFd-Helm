@@ -235,6 +235,8 @@ redis:
     host: external-redis-host
     username: ""
     password: ""
+    protocol: "redis"  # change to rediss if you are using TLS
+    database: 0
   volumePermissions:
     enabled: true  # set to false if you want to manage the permissions yourself
   sysctl:

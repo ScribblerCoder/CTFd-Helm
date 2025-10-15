@@ -81,7 +81,7 @@ mysql+pymysql://{{ index .Values "mariadb-galera" "external" "username" }}:{{ in
 {{- if .Values.redis.enabled -}}
 redis://{{ .Release.Name }}-redis-master:6379
 {{- else -}}
-{{- printf "%s://%s:%s@%s:%v/%s" (.Values.redis.external.protocol | default "redis") .Values.redis.external.username .Values.redis.external.password .Values.redis.external.host .Values.redis.external.port (.Values.redis.external.database | default 0) -}}
+{{- printf "%s://%s:%s@%s:%v/%v" (.Values.redis.external.protocol | default "redis") .Values.redis.external.username .Values.redis.external.password .Values.redis.external.host .Values.redis.external.port (.Values.redis.external.database | default 0) -}}
 {{- end -}}
 {{- end -}}
 
